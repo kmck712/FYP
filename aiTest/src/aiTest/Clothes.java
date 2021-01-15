@@ -7,12 +7,12 @@ public class Clothes {
 	Node clothesN;
 	int type; //type represent the kind of clothing it is. 1 = under top 2 = over top 3 = bottom
 	
-	public Clothes(String name, double Weight, int type)
+	public Clothes(String name, double Weight, int type, double[] nWeight)
 	{
 		this.name = name;
 		this.initalWeight = Weight;
 		this.type = type;
-		double defaultW[] = {0.5,0.5};
+		double defaultW[] = nWeight;
 		clothesN = new Node(defaultW);
 	}
 	

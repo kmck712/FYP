@@ -14,7 +14,7 @@ public class Node {
 		for(int i = 0; i < weights.length; i ++)
 		{
 			Weights.add(weights[i]);
-			LearningR.add(0.3);
+			LearningR.add(0.2);
 		}
 	}
 	protected void changeW(double error)
