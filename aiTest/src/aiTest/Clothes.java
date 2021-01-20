@@ -6,9 +6,11 @@ public class Clothes {
 	double initalWeight;
 	Node clothesN;
 	int type; //type represent the kind of clothing it is. 1 = under top 2 = over top 3 = bottom
+	int id;
 	
-	public Clothes(String name, double Weight, int type, double[] nWeight)
+	public Clothes(String name, double Weight, int type,int id,  double[] nWeight)
 	{
+		this.id = id;
 		this.name = name;
 		this.initalWeight = Weight;
 		this.type = type;

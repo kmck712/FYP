@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Node {
 
-	public ArrayList<Double> Weights;
-	public ArrayList<Double> LearningR;
+	private ArrayList<Double> Weights;
+	private ArrayList<Double> LearningR;
 	
 	Node(double weights[])
 	{
@@ -19,10 +19,19 @@ public class Node {
 	}
 	protected void changeW(double error)
 	{
-		double change = Weights.get(0) * LearningR.get(0) * error;  
-		Weights.set(0, Weights.get(0) + change);
-		Weights.set(1, Weights.get(1) + change);
+		int count = 0;
+		for (Double i: Weights)
+		{
+			double change = i * LearningR.get(count) * error;
+			Weights.set(count, i + change);
+			count ++;
+		}
 		
+	}
+	protected void setLearningRate(double learningR)
+	{
+		//only currently work for the single weight node layer. may need to change if needing to be applicable to other node objects.
+		this.LearningR.set(0, learningR);
 	}
 	protected double getWeight(int weightNum)
 	{
@@ -35,3 +44,4 @@ public class Node {
 		return Weights.get(weightNum);
 	}
 }
+//CREATE SETTERS AND REMOVE ALL INSTANCE OF INTERCLASS VALUE ALTERING
