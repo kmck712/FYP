@@ -7,14 +7,14 @@ public class Node {
 	private ArrayList<Double> Weights;
 	private ArrayList<Double> LearningR;
 	
-	Node(double weights[])
+	Node(double weights[],double LR)
 	{
 		Weights = new ArrayList<Double>();
 		LearningR = new ArrayList<Double>();
 		for(int i = 0; i < weights.length; i ++)
 		{
 			Weights.add(weights[i]);
-			LearningR.add(0.2);
+			LearningR.add(LR);
 		}
 	}
 	protected void changeW(double error)

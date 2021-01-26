@@ -198,12 +198,13 @@ public class aiTestMain {
 		}
 	}
 	
-	private static void running()
+	private static int[] running(int loops)
 
 	{
 		boolean endProg = false;
 		Scanner myObj = new Scanner(System.in); 
 		int count = 1;
+		int[] ans = new int[2];
 		while (endProg ==false)
 		{
 			int totalOut[] = numOutfits();
@@ -223,10 +224,12 @@ public class aiTestMain {
 					fOutfit += i.name + "\n";
 				}
 				System.out.println(fOutfit + "Do you like the outfit? y/n:\n");
-				String inp =  myObj.nextLine();	
-				
-				if (inp.equals("y") == true)
+				//String inp =  myObj.nextLine();	
+				//if (inp.equals("y") == true)
+				if (testing(bestOutfit)== true)
 				{
+					System.out.println("Yes");
+					ans[0] ++;
 					double error = 1 - result[2];
 					changingWeights(bestOutfit, error);
 					//TURN INTO A FUNCTION. REDUCE REDUNDANT CODE
@@ -247,19 +250,21 @@ public class aiTestMain {
 				}
 				else
 				{
+					System.out.println("No");
+					ans[1]++;
 					double error = - result[2];
 					changingWeights(bestOutfit, error);
 					if (result[0]> result[1])
 					{
-						nodeLayer.get(0).setLearningRate(0.3);
-						nodeLayer.get(1).setLearningRate(0.2);
+						nodeLayer.get(0).setLearningRate(0.6);
+						nodeLayer.get(1).setLearningRate(0.4);
 						nodeLayer.get(0).changeW(error);
 						nodeLayer.get(1).changeW(error);
 					}
 					else
 					{
-						nodeLayer.get(0).setLearningRate(0.2);
-						nodeLayer.get(1).setLearningRate(0.3);
+						nodeLayer.get(0).setLearningRate(0.4);
+						nodeLayer.get(1).setLearningRate(0.6);
 						nodeLayer.get(0).changeW(error);
 						nodeLayer.get(1).changeW(error);
 					}
@@ -268,15 +273,49 @@ public class aiTestMain {
 			}
 			System.out.println(count);
 			count ++;
+			if(count > loops)
+			{
+				
+				endProg = true;
+			}
 		}
+		return ans;
+	}
+	private static boolean testing(Clothes[] outfitTest)
+	{
+		if (outfitTest[0].getName().equals("Plain Red Shirt") && (outfitTest[1].getName().equals("Blue Hoodie")||outfitTest[2].getName().equals("Blue Jeans")))
+				{
+					return false;
+				}
+		if (outfitTest[0].getName().equals("Smart Shirt") || outfitTest[2].getName().equals("Smart Trousers"))
+		{
+			if (outfitTest[0].getName().equals("Smart Shirt") && outfitTest[1].getName().equals("Nothing")&&outfitTest[2].getName().equals("Smart Trousers"))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	private static void testRun()
+	{
+		int[] results = running(10);
+		System.out.println("The results are: " + results[0] + "/" + (results[0] + results[1]));
 	}
 	
+	/**
+	 * @param args
+	 */
 	public static void main(String args[]) 
 	{  
 		//these represent certain default weights which can be applied to the objects
 		double defaultEnd[] = {0.5};
 		double defaultEnd1[] = {0.5,0.5};
 		double defaultEnd2[] = {0.7,0.5};
+		double baseInp[] = {0.2,0.5,0.8};
 		
 		//initalises both the nodelayer and the wardrobe
 		nodeLayer = new ArrayList<Node>();
@@ -288,25 +327,26 @@ public class aiTestMain {
 		}
 		
 		//adds the default clothes into the system
-		wardrobe[0].add(new Clothes("black and White Shirt", 0.5, 1,wardrobe[0].size(), defaultEnd1));
-		wardrobe[0].add(new Clothes("band Shirt", 0.6, 1,wardrobe[0].size(), defaultEnd1));
-		wardrobe[0].add(new Clothes("Plain Red Shirt", 0.5, 1,wardrobe[0].size(), defaultEnd1));
-		wardrobe[0].add(new Clothes("Smart Shirt", 0.4, 1,wardrobe[0].size(), defaultEnd1));
+		wardrobe[0].add(new Clothes("black and White Shirt", baseInp[1], 1,wardrobe[0].size(), defaultEnd1));
+		wardrobe[0].add(new Clothes("band Shirt", baseInp[2], 1,wardrobe[0].size(), defaultEnd1));
+		wardrobe[0].add(new Clothes("Plain Red Shirt", baseInp[1], 1,wardrobe[0].size(), defaultEnd1));
+		wardrobe[0].add(new Clothes("Smart Shirt", baseInp[0], 1,wardrobe[0].size(), defaultEnd1));
 		
 		//temporary solution to the no jacket combination
-		wardrobe[1].add(new Clothes("Nothing", 0.5, 2,wardrobe[1].size(), defaultEnd1));
+		wardrobe[1].add(new Clothes("Nothing", baseInp[1], 2,wardrobe[1].size(), defaultEnd1));
+			
+		wardrobe[1].add(new Clothes("Leather Jacket", baseInp[2], 2,wardrobe[1].size(), defaultEnd1));
+		wardrobe[1].add(new Clothes("Blue Hoodie", baseInp[1], 2,wardrobe[1].size(), defaultEnd1));
 		
-		wardrobe[1].add(new Clothes("Leather Jacket", 0.6, 2,wardrobe[1].size(), defaultEnd1));
-		wardrobe[1].add(new Clothes("Blue Hoodie", 0.5, 2,wardrobe[1].size(), defaultEnd1));
-		
-		wardrobe[2].add(new Clothes("Blue Jeans", 0.5, 3,wardrobe[2].size(),defaultEnd1));
-		wardrobe[2].add(new Clothes("Grey Jeans", 0.5, 3,wardrobe[2].size(),defaultEnd1));
-		wardrobe[2].add(new Clothes("Smart Trousers", 0.5, 3,wardrobe[2].size(),defaultEnd1));
+		wardrobe[2].add(new Clothes("Blue Jeans", baseInp[1], 3,wardrobe[2].size(),defaultEnd1));
+		wardrobe[2].add(new Clothes("Grey Jeans", baseInp[1], 3,wardrobe[2].size(),defaultEnd1));
+		wardrobe[2].add(new Clothes("Smart Trousers", baseInp[0], 3,wardrobe[2].size(),defaultEnd1));
 		
 		//initialises the the taste node [0]and the synergy node[1] 
-		nodeLayer.add(new Node(defaultEnd));
-		nodeLayer.add(new Node(defaultEnd));
-		running();
+		nodeLayer.add(new Node(defaultEnd, 0.6));
+		nodeLayer.add(new Node(defaultEnd,0.4));
+		running(100);
+		testRun();
 		
 		}
 }

@@ -15,7 +15,7 @@ public class Clothes {
 		this.initalWeight = Weight;
 		this.type = type;
 		double defaultW[] = nWeight;
-		clothesN = new Node(defaultW);
+		clothesN = new Node(defaultW, 0.7);
 	}
 	
 	void changeW(double error)
@@ -27,5 +27,9 @@ public class Clothes {
 	double getWeight()
 	{
 		return(initalWeight);
+	}
+	String getName()
+	{
+		return(name);
 	}
 }
