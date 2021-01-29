@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">randomUITest</string>
+    <string name="place_top">Shirt</string>
+    <string name="place_over">Jacket</string>
+    <string name="place_bot">Trousers</string>
+    <string name="rand">Randomise</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+</resources>
