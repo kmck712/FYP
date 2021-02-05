@@ -3,33 +3,38 @@ package aiTest;
 public class Clothes {
 	
 	String name;
-	double initalWeight;
-	Node clothesN;
+	int inputValue;
 	int type; //type represent the kind of clothing it is. 1 = under top 2 = over top 3 = bottom
 	int id;
 	
-	public Clothes(String name, double Weight, int type,int id,  double[] nWeight)
+	public Clothes(String name, int type,int id)
 	{
 		this.id = id;
 		this.name = name;
-		this.initalWeight = Weight;
 		this.type = type;
-		double defaultW[] = nWeight;
-		clothesN = new Node(defaultW, 0.7);
 	}
 	
-	void changeW(double error)
+	
+	protected void setInputValue(int input)
 	{
-		clothesN.changeW(error);
+		inputValue = input;
 	}
 	
-	
-	double getWeight()
+	protected int getInputValue()
 	{
-		return(initalWeight);
+		return(inputValue);
 	}
-	String getName()
+	
+	protected String getName()
 	{
 		return(name);
+	}
+	protected int getId()
+	{
+		return(id);
+	}
+	protected int getType()
+	{
+		return(type);
 	}
 }

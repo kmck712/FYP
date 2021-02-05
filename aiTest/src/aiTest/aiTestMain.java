@@ -15,93 +15,178 @@ import java.util.Random;
 
 public class aiTestMain {
 	
+	private static ArrayList <Outfit> Outfits;
 	private static ArrayList<Clothes>[] wardrobe;
 	private static ArrayList<Node>nodeLayer; // node layer contains [0] taste node and [1] the synergy node
 
-	private static double[] execution(Clothes Outfit[])
+	private static double execution(Clothes Outfit[])
 	{
-		double tasteInp = 0;
-		double outfitInp = 0;
-		for(Clothes i: Outfit)
-		{
-			
-			tasteInp += i.getWeight() * i.clothesN.getWeight(0);
-			outfitInp += i.getWeight() * i.clothesN.getWeight(1);
-		}
-		double[] finalOut = new double[3];
-		//find a better way of doing this a half the function which need a final out don't need final out [0][1]
-		finalOut [0]= tasteInp * nodeLayer.get(0).getWeight(0);
-		finalOut [1]= outfitInp * nodeLayer.get(1).getWeight(0);
-		finalOut [2] = finalOut[1] + finalOut[0];
+		ArrayList <Double> inputs = new ArrayList<Double>();
+		inputs = calcInputs(Outfit);
+		//System.out.println(inputs);
+		double output = nodeLayer.get(0).calculateInputs(inputs);
+		nodeLayer.get(0).setFinalOutput(output);
+		//System.out.println(output);
 		
-		return finalOut;
+		
+		
+		return output;
 	}
 	
-	private static int[] numOutfits()
+	private static double executionOutfits(Outfit outfits)
 	{
-		int clothesNum[] = {wardrobe[0].size(),wardrobe[1].size(),wardrobe[2].size()};
-		/*for(Clothes i:wardrobe)
+		ArrayList <Double> inputs = new ArrayList<Double>();
+		inputs = calcInputsForOutfits(outfits);
+		//System.out.println(inputs);
+		double output = nodeLayer.get(1).calculateInputs(inputs);
+		nodeLayer.get(1).setFinalOutput(output);
+		//System.out.println(output);
+		
+		
+		
+		return output;
+	}
+	
+	private static ArrayList<Double> calcInputs(Clothes Outfit[])
+	{
+		ArrayList <Double> inputs = new ArrayList<Double>();
+		for (int i = 0; i < numClothes(); i ++)
 		{
-			switch(i.type)
+			inputs.add(0.0);
+		}
+		for (Clothes i : Outfit)
+		{
+			if(i.getType() == 1)
 			{
-			case 1:
-				clothesNum[0] += 1;
-				break;
-			case 2:
-				clothesNum[1] += 1;
-				break;
-			case 3:
-				clothesNum[2] += 1;
-				break;
+				inputs.set(i.getId(), 1.0);
+			}
+			else if(i.getType() == 2)
+			{
+				inputs.set(i.getId() + wardrobe[0].size(), 1.0);
+			}
+			else if(i.getType() == 3)
+			{
+				inputs.set(i.getId()+wardrobe[0].size() + wardrobe[1].size(), 1.0);
 			}
 		}
-		*/
+		return inputs;
+		
+	}
+	
+	private static ArrayList<Double> calcInputsForOutfits(Outfit outfits)
+	{
+		ArrayList <Double> inputs = new ArrayList<Double>();
+		for (int i = 0; i < numOutfits(); i ++)
+		{
+			inputs.add(0.0);
+		}
+		Clothes[] currentOut = outfits.getIndavidual();
+		double index =0;
+		index  += currentOut[0].id + currentOut[1].id * 3 + currentOut[2].id * 9; 
+		System.out.println("chosen outfit index: " + index );
+		
+		inputs.set(1, index);
+		
+		return inputs;
+		
+	}
+	
+	private static int numClothes()
+	{
+		int allInputs = 0;
+		for (int i = 0; i < wardrobe.length; i ++)
+		{
+			allInputs += wardrobe[i].size();
+		}
+		return allInputs;
+	}
+	
+	private static int numOutfits()
+	{
+		int clothesNum = wardrobe[0].size()*wardrobe[1].size()*wardrobe[2].size();
+	
 		return (clothesNum);
 	}
-	private static boolean dupValid(Clothes[] subject, ArrayList<Clothes[]> outfit)
+	
+	
+	
+	private static int[] numOutfits2()
+	{
+		int clothesNum[] = {wardrobe[0].size(),wardrobe[1].size(),wardrobe[2].size()};
+	
+		return (clothesNum);
+	}
+	
+	
+	private static boolean dupValid(Clothes[] subject)
+	//goal is ensure there are no duplicate outfits. this is done by checking if the current putfit 'subject' is in the current array'outfit'
 	{
 		boolean valid = true;
-		for (Clothes[] i: outfit)
+		if(Outfits.size() == 0)
 		{
-			if (i == subject)
+			return valid;
+		}
+		else
+		{
+			for(int i = 0; i < Outfits.size(); i ++)
 			{
-				valid = false;
+				int cnt = 0;
+				for (Clothes j :Outfits.get(i).getIndavidual())
+				{
+					if (j == subject[0]|| j == subject[1] || j == subject[2])
+					{
+						cnt ++;
+					}
+				}
+				if (cnt == 3)
+				{
+					valid = false;
+					return valid;
+				}
 			}
 		}
 		return valid;
 	}
-	
-	/*private static Clothes[] outfitProb()
+
+	private static Clothes[] outfitProb()
 	{
 		ArrayList <Clothes[]>outfit= new ArrayList<Clothes[]>();
-		int clothesNum[] = numOutfits();
+		int clothesNum[] = numOutfits2();
 		double highest[] = {0,0};
 		int cnt = 0;
-		System.out.println(clothesNum[0] + "hh " +  clothesNum[2]);
+		//System.out.println(clothesNum[0] + "hh " +  clothesNum[2]);
 			for (int i = 0; i < clothesNum[0];i ++)
 			{
-				for (int k = 0; k < clothesNum[2]; k ++)
+				for (int j = 0; j < clothesNum[1];j ++ )
 				{
-					Clothes sending[]= {wardrobe[0].get(i),wardrobe[2].get(k)};
-					boolean valid = dupValid(sending, outfit); 
-					if (valid == true)
+					for (int k = 0; k < clothesNum[2]; k ++)
 					{
-						double result = execution(sending);
-						if (result > highest[0])
+						Clothes sending[]= {wardrobe[0].get(i),wardrobe[1].get(j),wardrobe[2].get(k)};
+						boolean valid = dupValid(sending); 
+						if (valid == true)
 						{
-							highest[0] = result;
-							highest[1] = cnt;
+							double result = execution(sending);
+							//System.out.println("attempt: " + result + "  Highest:" + highest[0]);
+							if (result > highest[0])
+							{
+								highest[0] = result;
+								highest[1] = cnt;
+							}
+							outfit.add(sending);
+							cnt ++;
 						}
-						outfit.add(sending);
+						else 
+						{
+							
+						}
 					}
-					cnt = cnt + 1;
 				}
 			}
 		return outfit.get((int) highest[1]);
 	}
-	*/
 	
-	private static Clothes[] outfitProbRNG()
+	
+	/*private static Clothes[] outfitProbRNG()
 	{
 		ArrayList <Clothes[]>outfit= new ArrayList<Clothes[]>();
 		int clothesNum[] = numOutfits();
@@ -154,8 +239,9 @@ public class aiTestMain {
 		// end of clean up
 		return null;
 	}
+	*/
 	
-	private static void changingWeights(Clothes[] finalOut, double error)
+	/*private static void changingWeights(Clothes[] finalOut, double error)
 	{
 		// see if there is a way to reduce the amount of loop statements /streamline
 		for (Clothes i: finalOut)
@@ -197,90 +283,140 @@ public class aiTestMain {
 			}
 		}
 	}
+	*/
+	
+	private static void changeAllWeights(double error, Clothes[] outfit)
+	{
+		double momentum = 0.2;
+		double learningRate = 0.2;
+		ArrayList <Double> inputs = calcInputs(outfit);
+		nodeLayer.get(0).setDelta(error);
+		nodeLayer.get(0).changeAllWeights(learningRate, inputs, momentum);
+	}
+	
+	private static void changeAllWeightsForOutfits(double error, Outfit outfits)
+	{
+		double momentum = 0.2;
+		double learningRate = 0.2;
+		ArrayList <Double> inputs = calcInputsForOutfits(outfits);
+		nodeLayer.get(1).setDelta(error);
+		nodeLayer.get(1).changeAllWeights(learningRate, inputs, momentum);
+	}
 	
 	private static int[] running(int loops)
 
 	{
+		int[] results = {0,0};
 		boolean endProg = false;
 		Scanner myObj = new Scanner(System.in); 
 		int count = 1;
-		int[] ans = new int[2];
 		while (endProg ==false)
 		{
-			int totalOut[] = numOutfits();
-			int totalClothes = (totalOut[0]*(totalOut[1] + 1) * totalOut[2]);
-			System.out.println(totalClothes);
+			Clothes[] bestOutfit = outfitProb();
+			double result = execution(bestOutfit);	
 			
-			Clothes[] bestOutfit = outfitProbRNG();
+			Outfit bestOutfits = new Outfit(bestOutfit);
+			double synergyResult = executionOutfits(bestOutfits);
 			
-			double[] result = execution(bestOutfit);
-			System.out.println("result: " + result[2]);
-			
-			if (result[2] > 0)
+			System.out.println("result: " + result + " synergy result: " +synergyResult);
+			String fOutfit = "";
+			for (Clothes i: bestOutfit)
 			{
-				String fOutfit = "";
-				for (Clothes i: bestOutfit)
-				{
-					fOutfit += i.name + "\n";
-				}
-				System.out.println(fOutfit + "Do you like the outfit? y/n:\n");
-				//String inp =  myObj.nextLine();	
-				//if (inp.equals("y") == true)
-				if (testing(bestOutfit)== true)
-				{
-					System.out.println("Yes");
-					ans[0] ++;
-					double error = 1 - result[2];
-					changingWeights(bestOutfit, error);
-					//TURN INTO A FUNCTION. REDUCE REDUNDANT CODE
-					if (result[0]> result[1])
-					{
-						nodeLayer.get(0).setLearningRate(0.3);
-						nodeLayer.get(1).setLearningRate(0.2);
-						nodeLayer.get(0).changeW(error);
-						nodeLayer.get(1).changeW(error);
-					}
-					else
-					{
-						nodeLayer.get(0).setLearningRate(0.2);
-						nodeLayer.get(1).setLearningRate(0.3);
-						nodeLayer.get(0).changeW(error);
-						nodeLayer.get(1).changeW(error);
-					}
-				}
-				else
-				{
-					System.out.println("No");
-					ans[1]++;
-					double error = - result[2];
-					changingWeights(bestOutfit, error);
-					if (result[0]> result[1])
-					{
-						nodeLayer.get(0).setLearningRate(0.6);
-						nodeLayer.get(1).setLearningRate(0.4);
-						nodeLayer.get(0).changeW(error);
-						nodeLayer.get(1).changeW(error);
-					}
-					else
-					{
-						nodeLayer.get(0).setLearningRate(0.4);
-						nodeLayer.get(1).setLearningRate(0.6);
-						nodeLayer.get(0).changeW(error);
-						nodeLayer.get(1).changeW(error);
-					}
-				}
+				fOutfit += i.name + "\n";
+			}	
+			System.out.println(fOutfit);
+			/*
+			System.out.println(fOutfit + "Do you like the outfit? y/n:\n");
+			String inp =  myObj.nextLine();	
 			
+			if (inp.equals("y") == true)
+			*/
+			if (testing(bestOutfit) == true)
+			{
+				results[0] ++;
+				System.out.println("Yes");
+				changeAllWeights(1-result,bestOutfit);
+				changeAllWeightsForOutfits(1-result,bestOutfits);
+			}	
+			else
+			{
+				results[1] ++;
+				System.out.println("No");
+				changeAllWeights(-result,bestOutfit);
+				changeAllWeightsForOutfits(-result,bestOutfits);
 			}
-			System.out.println(count);
+			//System.out.println(count);
 			count ++;
 			if(count > loops)
-			{
-				
+			{	
 				endProg = true;
 			}
+			if (Outfits.size() < 5)
+			{
+				Outfits.add(new Outfit(bestOutfit));
+			}
+			else 
+			{
+				Outfits.remove(0);
+				Outfits.add(new Outfit(bestOutfit));
+			}
+	
 		}
-		return ans;
+		return results;
 	}
+	
+	private static int[] running2(int loops)
+	{
+		int[] results = {0,0};
+		boolean endProg = false;
+		Scanner myObj = new Scanner(System.in); 
+		int count = 1;
+		while (endProg ==false)
+		{
+			Clothes[] bestOutfit = outfitProb();
+			double result = execution(bestOutfit);	
+			
+			Outfit bestOutfits = new Outfit(bestOutfit);
+			double synergyResult = executionOutfits(bestOutfits);
+			
+			System.out.println("result: " + result + " synergy result: " +synergyResult);
+			String fOutfit = "";
+			for (Clothes i: bestOutfit)
+			{
+				fOutfit += i.name + "\n";
+			}	
+			System.out.println(fOutfit);
+		
+			if (testing(bestOutfit) == true)
+			{
+				results[0] ++;
+				System.out.println("Yes");
+			}	
+			else
+			{
+				results[1] ++;
+				System.out.println("No");
+			}
+			//System.out.println(count);
+			count ++;
+			if(count > loops)
+			{	
+				endProg = true;
+			}
+			if (Outfits.size() < 5)
+			{
+				Outfits.add(new Outfit(bestOutfit));
+			}
+			else 
+			{
+				Outfits.remove(0);
+				Outfits.add(new Outfit(bestOutfit));
+			}
+	
+		}
+		return results;
+	}
+	
 	private static boolean testing(Clothes[] outfitTest)
 	{
 		if (outfitTest[0].getName().equals("Plain Red Shirt") && (outfitTest[1].getName().equals("Blue Hoodie")||outfitTest[2].getName().equals("Blue Jeans")))
@@ -300,9 +436,10 @@ public class aiTestMain {
 		}
 		return true;
 	}
-	private static void testRun()
+	
+	private static void testRun(int epochs)
 	{
-		int[] results = running(10);
+		int[] results = running2(epochs);
 		System.out.println("The results are: " + results[0] + "/" + (results[0] + results[1]));
 	}
 	
@@ -311,12 +448,6 @@ public class aiTestMain {
 	 */
 	public static void main(String args[]) 
 	{  
-		//these represent certain default weights which can be applied to the objects
-		double defaultEnd[] = {0.5};
-		double defaultEnd1[] = {0.5,0.5};
-		double defaultEnd2[] = {0.7,0.5};
-		double baseInp[] = {0.2,0.5,0.8};
-		
 		//initalises both the nodelayer and the wardrobe
 		nodeLayer = new ArrayList<Node>();
 		wardrobe =  new ArrayList[3];
@@ -327,26 +458,33 @@ public class aiTestMain {
 		}
 		
 		//adds the default clothes into the system
-		wardrobe[0].add(new Clothes("black and White Shirt", baseInp[1], 1,wardrobe[0].size(), defaultEnd1));
-		wardrobe[0].add(new Clothes("band Shirt", baseInp[2], 1,wardrobe[0].size(), defaultEnd1));
-		wardrobe[0].add(new Clothes("Plain Red Shirt", baseInp[1], 1,wardrobe[0].size(), defaultEnd1));
-		wardrobe[0].add(new Clothes("Smart Shirt", baseInp[0], 1,wardrobe[0].size(), defaultEnd1));
+		wardrobe[0].add(new Clothes("black and White Shirt", 1,wardrobe[0].size()));
+		wardrobe[0].add(new Clothes("band Shirt", 1,wardrobe[0].size()));
+		wardrobe[0].add(new Clothes("Plain Red Shirt", 1,wardrobe[0].size()));
+		wardrobe[0].add(new Clothes("Smart Shirt", 1,wardrobe[0].size()));
 		
 		//temporary solution to the no jacket combination
-		wardrobe[1].add(new Clothes("Nothing", baseInp[1], 2,wardrobe[1].size(), defaultEnd1));
+		wardrobe[1].add(new Clothes("Nothing", 2,wardrobe[1].size()));
 			
-		wardrobe[1].add(new Clothes("Leather Jacket", baseInp[2], 2,wardrobe[1].size(), defaultEnd1));
-		wardrobe[1].add(new Clothes("Blue Hoodie", baseInp[1], 2,wardrobe[1].size(), defaultEnd1));
+		wardrobe[1].add(new Clothes("Leather Jacket", 2,wardrobe[1].size()));
+		wardrobe[1].add(new Clothes("Blue Hoodie", 2,wardrobe[1].size()));
 		
-		wardrobe[2].add(new Clothes("Blue Jeans", baseInp[1], 3,wardrobe[2].size(),defaultEnd1));
-		wardrobe[2].add(new Clothes("Grey Jeans", baseInp[1], 3,wardrobe[2].size(),defaultEnd1));
-		wardrobe[2].add(new Clothes("Smart Trousers", baseInp[0], 3,wardrobe[2].size(),defaultEnd1));
+		wardrobe[2].add(new Clothes("Blue Jeans", 3,wardrobe[2].size()));
+		wardrobe[2].add(new Clothes("Grey Jeans", 3,wardrobe[2].size()));
+		wardrobe[2].add(new Clothes("Smart Trousers", 3,wardrobe[2].size()));
+		
+		
+		
+		int allInputs = 1;
+		allInputs += numClothes();
+		Outfits = new ArrayList<Outfit>();
 		
 		//initialises the the taste node [0]and the synergy node[1] 
-		nodeLayer.add(new Node(defaultEnd, 0.6));
-		nodeLayer.add(new Node(defaultEnd,0.4));
-		running(100);
-		testRun();
+		nodeLayer.add(new Node(allInputs));
+		
+		nodeLayer.add(new Node(numOutfits() +1));
+		running(0);
+		//testRun(100);
 		
 		}
 }
