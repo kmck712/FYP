@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">testApp</string>
     <string name="cam_button">Camera</string>
+    <string name="switch_but">Switch screen</string>
+    <string name="t_shirt">T-shirt</string>
+    <string name="trousers">Trousers</string>
+    <string name="over_top">Jacket</string>
+    <string name="confirm">Confirm Outfit</string>
+    <string name="itemAddDefault">Please enter the item name and catergory here:</string>
+    <string name="list_all">Show all items in the wardrobe</string>
+    <string name="back">Back</string>
 </resources>
