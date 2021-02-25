@@ -2,7 +2,7 @@ package com.example.testapp;
 
 public class Clothes {
 	
-	String name;
+	private String name;
 	int inputValue;
 	int type; //type represent the kind of clothing it is. 1 = under top 2 = over top 3 = bottom
 	int id;

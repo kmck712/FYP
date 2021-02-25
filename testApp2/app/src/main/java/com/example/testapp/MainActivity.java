@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
 
-    private aiTestMain wardrobe;
+    private NeuralNet wardrobe;
     boolean test;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +27,10 @@ public class MainActivity extends AppCompatActivity {
         Intent newIntent = getIntent();
         test = newIntent.getBooleanExtra("WARDROBE_PASSED", false);
         if ( test) {
-            wardrobe = new aiTestMain(newIntent.getStringArrayExtra("WARDROBE_NAMES"),
+            wardrobe = new NeuralNet(newIntent.getStringArrayExtra("WARDROBE_NAMES"),
                     newIntent.getDoubleArrayExtra("WARDROBE_WEIGHTS"),
                     newIntent.getDoubleArrayExtra("WARDROBE_DIMENSIONS"));
-
+                // need to change to a parcable and create a constructor which allows this to happen within aiTestMain
         }
 
     }
@@ -46,11 +46,18 @@ public class MainActivity extends AppCompatActivity {
     public void drobeTest(View view)
     {
 
-        ((TextView)findViewById(R.id.textView)).setText( "heya " + wardrobe.getEntireWardrobe());
+        //((TextView)findViewById(R.id.textView)).setText( "heya " + wardrobe.getEntireWardrobe());
+       double [] testt =  wardrobe.getAllWeights();
+       String outTest = "";
+       for (double i : testt)
+       {
+           outTest += i + "\n";
+       }
+        ((TextView)findViewById(R.id.textView)).setText( outTest );
     }
     public void randomOutfit(View view)
     {
-        if (wardrobe != null)
+      /*  if (wardrobe != null)
         {
             wardrobe.running();
             ((TextView) findViewById(R.id.topResultText)).setText(wardrobe.currentBestOutfits[0].name);
@@ -61,13 +68,19 @@ public class MainActivity extends AppCompatActivity {
         else {
             ((TextView) findViewById(R.id.topResultText)).setText("Please add clothes");
         }
+
+       */
     }
     public void accept(View view)
     {
-
+        /*wardrobe.outcomeChange(1);*/
     }
-    public void decline(View view)
-    {
+    public void decline(View view) {
+       /* wardrobe.outcomeChange(0);
+        ((TextView) findViewById(R.id.topResultText)).setText("");
+        ((TextView) findViewById(R.id.underResultText)).setText("");
+        ((TextView) findViewById(R.id.bottomResultText)).setText("");
+        */
 
     }
 

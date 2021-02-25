@@ -23,6 +23,65 @@ public class aiTestMain  {
 	private static ArrayList<Clothes>[] wardrobe;
 	private static ArrayList<Node>nodeLayer; // node layer contains [0] taste node and [1] the synergy node
 	private double currentResult;
+	public aiTestMain()
+	{
+		//initalises both the nodelayer and the wardrobe
+		nodeLayer = new ArrayList<>();
+		wardrobe =  new ArrayList[3];
+		//initialises the wardrobe arraylist by creating a new array list object for each of the type of objects
+		for (int i = 0; i < wardrobe.length; i ++)
+		{
+			wardrobe[i] = new ArrayList<Clothes>();
+		}
+		nodeLayer.add(new Node());
+		//nodeLayer.add(new Node());
+	}
+
+	public aiTestMain(String[] names, double[] Weights, double[] Dimensions)
+	{
+		nodeLayer = new ArrayList<Node>();
+		wardrobe =  new ArrayList[3];
+		//initialises the wardrobe arraylist by creating a new array list object for each of the type of objects
+
+		for (int i = 0; i < 3; i ++)
+		{
+			wardrobe[i] = new ArrayList<Clothes>();
+		}
+		int k = 0;
+		for(int i = 0; i < 3; i ++)
+		{
+			for (int j =0 ; j <Dimensions[i]; j ++)
+			{
+				wardrobe[i].add(new Clothes(names[k], j + 1, wardrobe[j].size()));
+				k ++;
+			}
+		}
+		nodeLayer.add(new Node(Weights, Dimensions));
+		nodeLayer.add(new Node());
+
+	}
+	public void addItem(int type, CharSequence name2)
+	{
+		String name = name2.toString();
+		switch (type) {
+			case 1:
+				wardrobe[0].add(new Clothes(name, 1,wardrobe[0].size()));
+				nodeLayer.get(0).addNode(type);
+				break;
+			case 2:
+				wardrobe[1].add(new Clothes(name, 2,wardrobe[1].size()));
+				nodeLayer.get(0).addNode(type);
+				break;
+			case 3:
+				wardrobe[2].add(new Clothes(name, 3,wardrobe[2].size()));
+				nodeLayer.get(0).addNode(type);
+				break;
+		}
+	}
+
+
+
+
 
 
 	private static double execution(Clothes Outfit[])
@@ -211,6 +270,8 @@ public class aiTestMain  {
 	
 	public void running()
 	{
+		nodeLayer.get(0).clearW(); // this is a temp method to facilitate the current use of the passing and is not even close to being the ideal.
+		nodeLayer.get(0).formatWeights();
 		Clothes[] bestOutfit = outfitProb();
 		currentResult = execution(bestOutfit);
 		//Outfit bestOutfits = new Outfit(bestOutfit);
@@ -218,31 +279,14 @@ public class aiTestMain  {
 		currentBestOutfits = bestOutfit;
 	}
 
-	private void outcomeChange(int YorN)
+	public void outcomeChange(int YorN)
 	{
 		 changeAllWeights(YorN-currentResult,currentBestOutfits);
 		// changeAllWeightsForOutfits(YorN-currentResult,currentBestOutfits);
 	}
 
 
-	public void addItem(int type, CharSequence name2)
-	{
-		String name = name2.toString();
-		switch (type) {
-			case 1:
-				wardrobe[0].add(new Clothes(name, 1,wardrobe[0].size()));
-				nodeLayer.get(0).addNode(0,wardrobe[0].size(), wardrobe[1].size());
-				break;
-			case 2:
-				wardrobe[1].add(new Clothes(name, 2,wardrobe[1].size()));
-				nodeLayer.get(0).addNode(1, wardrobe[0].size(), wardrobe[1].size());
-				break;
-			case 3:
-				wardrobe[2].add(new Clothes(name, 3,wardrobe[2].size()));
-				nodeLayer.get(0).addNode(2, wardrobe[0].size(), wardrobe[1].size());
-				break;
-		}
-	}
+
 	public String getName(int position, int type)
 	{
 		return wardrobe[type].get(position).getName();
@@ -263,14 +307,11 @@ public class aiTestMain  {
 
 	public double[] getAllWeights()
 	{
-		double[]  allWeights = new double[numClothes() + 1];
-		for (int i = 0; i < wardrobe.length; i ++ ) {
-			for (int j = 0; j <= wardrobe[i].size(); j++) {
-				allWeights[j] = nodeLayer.get(0).getWeight(j);
-				//need to ensure that the bais wieght is added before any loop occur
-			}
-		}
-		return  allWeights;
+		return  nodeLayer.get(0).getAllWeights();
+	}
+	public ArrayList[] getAllWeightsSending()
+	{
+		return  nodeLayer.get(0).getW() ;
 	}
 	public double[] getDimensions()
 	{
@@ -298,49 +339,7 @@ public class aiTestMain  {
 	{
 		return wardrobe[type].size() -1  ;
 	}
-	public aiTestMain()
-	{
 
-		//initalises both the nodelayer and the wardrobe
-		nodeLayer = new ArrayList<Node>();
-		wardrobe =  new ArrayList[3];
-		//initialises the wardrobe arraylist by creating a new array list object for each of the type of objects
-		for (int i = 0; i < 3; i ++)
-		{
-			wardrobe[i] = new ArrayList<Clothes>();
-		}
-
-		int allInputs = 1;
-		allInputs += numClothes();
-		nodeLayer.add(new Node(allInputs));
-
-		nodeLayer.add(new Node(numOutfits() +1));
-	}
-
-	public aiTestMain(String[] names, double[] Weights, double[] Dimensions)
-	{
-		nodeLayer = new ArrayList<Node>();
-		wardrobe =  new ArrayList[3];
-		//initialises the wardrobe arraylist by creating a new array list object for each of the type of objects
-
-		for (int i = 0; i < 3; i ++)
-		{
-			wardrobe[i] = new ArrayList<Clothes>();
-		}
-		int k = 0;
-		for(int i = 0; i < 3; i ++)
-		{
-			for (int j =0 ; j <Dimensions[i]; j ++)
-			{
-				wardrobe[i].add(new Clothes(names[k], j + 1, wardrobe[j].size()));
-				k ++;
-			}
-		}
-		int allInputs = Weights.length;
-		nodeLayer.add(new Node(allInputs));
-		nodeLayer.add(new Node(numOutfits() +1));
-
-	}
 
 
 

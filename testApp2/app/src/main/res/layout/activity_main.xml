@@ -34,8 +34,8 @@
 
     <Button
         android:id="@+id/randomise"
-        android:layout_width="90dp"
-        android:layout_height="40dp"
+        android:layout_width="123dp"
+        android:layout_height="47dp"
         android:onClick="randomOutfit"
         android:text="randomise"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,7 +49,7 @@
         android:id="@+id/noButton"
         android:layout_width="90dp"
         android:layout_height="40dp"
-        android:onClick="randomOutfit"
+        android:onClick="decline"
         android:text="No"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/yesButton"
@@ -64,7 +64,7 @@
         android:layout_height="40dp"
         android:layout_marginEnd="68dp"
         android:layout_marginRight="68dp"
-        android:onClick="randomOutfit"
+        android:onClick="accept"
         android:text="Yes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

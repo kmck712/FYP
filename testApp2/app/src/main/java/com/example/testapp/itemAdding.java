@@ -11,13 +11,13 @@ import android.widget.TextView;
 
 
 public class itemAdding extends AppCompatActivity {
-    private aiTestMain wardrobe;
+    private NeuralNet wardrobe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_adding);
-       wardrobe = new aiTestMain();
+       wardrobe = new NeuralNet();
     }
 
     public void itemAdd(View view)
@@ -61,7 +61,7 @@ public class itemAdding extends AppCompatActivity {
         //intent.putExtra("WARDROBE_OBJECT", wardrobe);
         intent.putExtra("WARDROBE_NAMES", wardrobe.getAllNames());
         intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights());
-        intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getDimensions());
+        intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getAllClassSize());
         intent.putExtra("WARDROBE_PASSED", true);
         startActivity(intent);
         finish();
