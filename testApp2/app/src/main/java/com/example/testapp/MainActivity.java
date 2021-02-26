@@ -20,17 +20,20 @@ public class MainActivity extends AppCompatActivity {
 
     private NeuralNet wardrobe;
     boolean test;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Intent newIntent = getIntent();
         test = newIntent.getBooleanExtra("WARDROBE_PASSED", false);
         if ( test) {
-            wardrobe = new NeuralNet(newIntent.getStringArrayExtra("WARDROBE_NAMES"),
+            wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
                     newIntent.getDoubleArrayExtra("WARDROBE_WEIGHTS"),
-                    newIntent.getDoubleArrayExtra("WARDROBE_DIMENSIONS"));
+                    newIntent.getIntArrayExtra("WARDROBE_DIMENSIONS"));
                 // need to change to a parcable and create a constructor which allows this to happen within aiTestMain
+
         }
 
     }
@@ -45,43 +48,42 @@ public class MainActivity extends AppCompatActivity {
 
     public void drobeTest(View view)
     {
-
-        //((TextView)findViewById(R.id.textView)).setText( "heya " + wardrobe.getEntireWardrobe());
-       double [] testt =  wardrobe.getAllWeights();
+        // found the issue it's miss classifiy the weights being added by having class 1 as class 0
        String outTest = "";
-       for (double i : testt)
+       for (double i: wardrobe.getAllWeights())
        {
-           outTest += i + "\n";
+           outTest += "weight " + i + "\n";
        }
-        ((TextView)findViewById(R.id.textView)).setText( outTest );
+
+       // String output = wardrobe.getAllNames();
+       //((TextView)findViewById(R.id.textView)).setText( output );
     }
     public void randomOutfit(View view)
     {
-      /*  if (wardrobe != null)
+        if (wardrobe != null)
         {
             wardrobe.running();
-            ((TextView) findViewById(R.id.topResultText)).setText(wardrobe.currentBestOutfits[0].name);
-            ((TextView) findViewById(R.id.underResultText)).setText(wardrobe.currentBestOutfits[1].name);
-            ((TextView) findViewById(R.id.bottomResultText)).setText(wardrobe.currentBestOutfits[2].name);
-
+            ((TextView) findViewById(R.id.topResultText)).setText(wardrobe.currentBestOutfits[0].getName());
+            ((TextView) findViewById(R.id.underResultText)).setText(wardrobe.currentBestOutfits[1].getName());
+            ((TextView) findViewById(R.id.bottomResultText)).setText(wardrobe.currentBestOutfits[2].getName());
+            ((TextView)findViewById(R.id.textView)).setText("" +wardrobe.currentResult);
         }
         else {
             ((TextView) findViewById(R.id.topResultText)).setText("Please add clothes");
         }
-
-       */
     }
     public void accept(View view)
     {
-        /*wardrobe.outcomeChange(1);*/
-    }
-    public void decline(View view) {
-       /* wardrobe.outcomeChange(0);
+        wardrobe.outcomeChange(1);
         ((TextView) findViewById(R.id.topResultText)).setText("");
         ((TextView) findViewById(R.id.underResultText)).setText("");
         ((TextView) findViewById(R.id.bottomResultText)).setText("");
-        */
-
+    }
+    public void decline(View view) {
+       wardrobe.outcomeChange(0);
+       ((TextView) findViewById(R.id.topResultText)).setText("");
+       ((TextView) findViewById(R.id.underResultText)).setText("");
+       ((TextView) findViewById(R.id.bottomResultText)).setText("");
     }
 
 }

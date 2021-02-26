@@ -21,13 +21,17 @@ public class Outfit{
 		Clothes[] out = new Clothes[3];
 		for(int i = 0; i < outfit.size(); i ++)
 		{
-			out[i] = outfit.get(i);
+			out[i] =  getIndavidualItem(i);
 		}
 		return out;
 	}
+	protected Clothes getIndavidualItem(int pos)
+	{
+		return outfit.get(pos);
+	}
 	protected String getItemName(int id)
 	{
-		String output = outfit.get(id).name; 
+		String output = outfit.get(id).getName();
 		return output;
 	}
 }

@@ -44,7 +44,8 @@ public class itemAdding extends AppCompatActivity {
         else
         {
             wardrobe.addItem(inputType, inputName);
-            ((TextView) findViewById(R.id.itemAddInfo)).setText(wardrobe.getName( wardrobe.getClassSize(inputType-1),inputType -1 ) + " has been successfully added!");
+
+            ((TextView) findViewById(R.id.itemAddInfo)).setText(  wardrobe.getName( inputType-1,wardrobe.getClassSize(inputType- 1) - 1) + " has been successfully added!");
 
         }
 
@@ -60,7 +61,7 @@ public class itemAdding extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class) ;
         //intent.putExtra("WARDROBE_OBJECT", wardrobe);
         intent.putExtra("WARDROBE_NAMES", wardrobe.getAllNames());
-        intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights());
+        intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights()); // all working here
         intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getAllClassSize());
         intent.putExtra("WARDROBE_PASSED", true);
         startActivity(intent);
