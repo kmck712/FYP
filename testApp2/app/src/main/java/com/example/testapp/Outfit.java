@@ -5,9 +5,10 @@ import java.util.ArrayList;
 public class Outfit{
 
 	private ArrayList<Clothes> outfit;
-	
-	Outfit(Clothes[] items) {
+	private int id;
+	Outfit(Clothes[] items, int id) {
 		outfit = new ArrayList<Clothes>();
+		this.id = id;
 		for (Clothes i: items)
 		{
 			outfit.add(i);
@@ -15,7 +16,7 @@ public class Outfit{
 		}
 	
 	}
-	
+
 	protected Clothes[] getIndavidual()
 	{
 		Clothes[] out = new Clothes[3];
@@ -29,9 +30,20 @@ public class Outfit{
 	{
 		return outfit.get(pos);
 	}
-	protected String getItemName(int id)
+	/*protected String getItemName(int id)
 	{
 		String output = outfit.get(id).getName();
 		return output;
 	}
+
+	 */
+	protected String getAllItemNames()
+	{
+		String output = "";
+		for (Clothes i : outfit) {
+			output += i.getName() + "\n";
+		}
+		return output;
+	}
+	protected int getId(){return id;}
 }

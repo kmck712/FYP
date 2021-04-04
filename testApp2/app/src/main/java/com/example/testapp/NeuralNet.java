@@ -14,20 +14,26 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 
 public class NeuralNet  {
-
+	public Outfit currentAllBest;
 	public Clothes[] currentBestOutfits; // make private and created getters and setters
 	public double currentResult;
 	private static ArrayList <Outfit> Outfits;
 	private static ArrayList<Clothes>[] wardrobe;
 	private static Node2 nodeLayer; // node layer contains [0] taste node and [1] the synergy node
+	private static Node2 outfitLayer;
 
+	//----------------------------------------------------------------------------------------------
+	//Inital constructor for the Neural network
 	public NeuralNet() {
-		nodeLayer = new Node2();
+		nodeLayer = new Node2(3);
+		outfitLayer = new Node2(1);
 
+		Outfits = new ArrayList<>();
 		wardrobe = new ArrayList[3];
 		for (int i = 0; i < wardrobe.length; i++) {
-			wardrobe[i] = new ArrayList<Clothes>();
+			wardrobe[i] = new ArrayList<>();
 		}
+
 
 	}
 	//---------------------------------------------------------------------------------------------
@@ -35,7 +41,8 @@ public class NeuralNet  {
 	public NeuralNet(String passNames, double [] Weights, int[] Dimensions)
 	{
 		String names[] = passNames.split(",");
-		nodeLayer = new Node2(Weights[0]);
+		nodeLayer = new Node2(3,Weights[0]);
+		outfitLayer = new Node2(1);
 		wardrobe = new ArrayList[3];
 
 		for (int i = 0; i < wardrobe.length; i++) {
@@ -44,19 +51,22 @@ public class NeuralNet  {
 
 		//not a fan of this method. must be a better way
 		int count = 0;
+
 		for (int i = 0; i < Dimensions.length; i ++)
 		{
 			for (int j = 0; j < Dimensions[i]; j ++)
 			{
-				addItem(i + 1,names[count]);
+				//addItem(i + 1,names[count]);
+				wardrobe[i].add(new Clothes(names[count],i +1,wardrobe[i].size()));
 				nodeLayer.addPassedNode(i,Weights[count +1], 0);
+
 				count++;
 			}
 		}
+
+
 	}
 	//---------------------------------------------------------------------------------------------
-
-
 
 	private static boolean dupValid(Outfit subject, ArrayList<Outfit> compareOutfit)
 	//goal is ensure there are no duplicate outfits. this is done by checking if the current putfit 'subject' is in the current array'outfit'
@@ -88,25 +98,48 @@ public class NeuralNet  {
 
 	private static ArrayList<Double> calcInputs(Clothes Outfit[])
 	{
+		ArrayList <Double>inputs = new ArrayList();
+		//for(ArrayList i : inputs){i = new ArrayList<Double>();}
+
+		//System.out.println("item id's1 " + Outfit[0].getId());
+
+		//System.out.println("item id's1 " + Outfit[1].getId());
+
+		//System.out.println("item id's1 " + Outfit[2].getId());
+		int cnt = 0;
+		for (ArrayList<Clothes> i: wardrobe) {
+			for (Clothes j : i) {
+				if (j.getId() == Outfit[cnt].getId())
+				{
+					inputs.add(1.0);
+				}
+				else
+				{
+					inputs.add(0.0);
+				}
+			}
+			cnt++;
+		}
+		//System.out.println("outpit " + inputs);
+		return inputs;
+
+	}
+
+	private static ArrayList<Double> calcOutfitInputs(Clothes Outfit[])
+	{
 		ArrayList <Double> inputs = new ArrayList<Double>();
 
-		for (int i = 0;i < totalClassSize() ; i ++)
-		{
-			inputs.add(0.0);
-		}
-		for (Clothes i : Outfit)
-		{
-			if(i.getType() == 1)
-			{
-				inputs.set(i.getId(), 1.0);
-			}
-			else if(i.getType() == 2)
-			{
-				inputs.set(i.getId() + wardrobe[0].size(), 1.0);
-			}
-			else if(i.getType() == 3)
-			{
-				inputs.set(i.getId()+wardrobe[0].size() + wardrobe[1].size(), 1.0);
+		for (Clothes i : wardrobe[0]) {
+			for (Clothes j : wardrobe[1]){
+				for (Clothes k: wardrobe[2])
+				{
+					if(i.getId() == Outfit[0].getId() && j.getId() == Outfit[1].getId() && k.getId() == Outfit[2].getId())
+					{
+						inputs.add(1.0);
+					}
+					else
+					{inputs.add(0.0);}
+				}
 			}
 		}
 		return inputs;
@@ -117,7 +150,13 @@ public class NeuralNet  {
 	{
 		ArrayList <Double> inputs = new ArrayList();
 		inputs = calcInputs(Outfit);
-		double output = nodeLayer.calculateInputs(inputs, getAllWeights());
+		ArrayList <Double> outfitInputs = new ArrayList();
+		outfitInputs = calcOutfitInputs(Outfit);
+		System.out.println(outfitInputs);
+		double output = nodeLayer.calculateInputs(inputs);
+		double output2 = outfitLayer.calculateInputs(outfitInputs);
+		System.out.println("outfit prob " + output2);
+		//double finalOutput = output*output2;
 		//nodeLayer.setFinalOutput(output);
 		return output;
 	}
@@ -137,7 +176,7 @@ public class NeuralNet  {
 				for (Clothes k : wardrobe[2])
 				{
 					//the oufit being sent for get results
-					Outfit sending= new Outfit(new Clothes[]{i, j, k});
+					Outfit sending= new Outfit(new Clothes[]{i, j, k}, 0);
 
 					boolean valid = dupValid(sending, allOutfit);
 					if (valid == true)
@@ -165,8 +204,10 @@ public class NeuralNet  {
 	public void running()
 	{
 		Clothes[] bestOutfit = outfitProb();
+		//System.out.println("outpit " + currentResult);
 		currentResult = execution(bestOutfit);
 		currentBestOutfits = bestOutfit;
+		//currentAllBest = new Outfit(bestOutfit);
 	}
 	//-----------------------------------------------------------------------------------------------
 	private static void changeAllWeights(double error, Clothes[] outfit)
@@ -174,6 +215,7 @@ public class NeuralNet  {
 		double momentum = 0.2;
 		double learningRate = 0.2;
 		ArrayList <Double> inputs = calcInputs(outfit);
+		System.out.println("inputs " + inputs);
 		nodeLayer.setDelta(error);
 		nodeLayer.changeAllWeights(learningRate, inputs, momentum);
 	}
@@ -190,19 +232,46 @@ public class NeuralNet  {
 		String name = name2.toString();
 		switch (type) {
 			case 1:
-				wardrobe[0].add(new Clothes(name, 1,wardrobe[0].size()));
+				Clothes newItem1 = new Clothes(name, 1,wardrobe[0].size());
+				wardrobe[0].add(newItem1);
 				nodeLayer.addNode(type);
+				for(Clothes i : wardrobe[1]) {
+					for(Clothes j : wardrobe[2])
+					{
+						Outfits.add(new Outfit(new Clothes[]{newItem1,i, j},Outfits.size()));
+						outfitLayer.addNode(1);
+					}
+				}
+
 				break;
 			case 2:
-				wardrobe[1].add(new Clothes(name, 2,wardrobe[1].size()));
+				Clothes newItem2 = new Clothes(name, 2,wardrobe[1].size());
+				wardrobe[1].add(newItem2);
 				nodeLayer.addNode(type);
+				for(Clothes i : wardrobe[0]) {
+					for(Clothes j : wardrobe[2])
+					{
+						Outfits.add(new Outfit(new Clothes[]{i,newItem2,j},Outfits.size()));
+						outfitLayer.addNode(1);
+					}
+				}
 				break;
 			case 3:
-				wardrobe[2].add(new Clothes(name, 3,wardrobe[2].size()));
+				Clothes newItem3 = new Clothes(name, 3,wardrobe[2].size());
+				wardrobe[2].add(newItem3);
 				nodeLayer.addNode(type);
+				for(Clothes i : wardrobe[0]) {
+					for(Clothes j : wardrobe[1])
+					{
+						Outfits.add(new Outfit(new Clothes[]{i, j, newItem3},Outfits.size()));
+						outfitLayer.addNode(1);
+					}
+				}
 				break;
 		}
+		System.out.println(getAllOutfits());
 	}
+
 
 
 	//---------------------------------------------------------------------------------------------
@@ -223,6 +292,15 @@ public class NeuralNet  {
 		return (output);
 	}
 
+	public String getAllOutfits()
+	{
+		String output = "";
+		for(Outfit i : Outfits)
+		{
+			output += i.getId() + " \n"+ i.getAllItemNames() ;
+		}
+		return (output);
+	}
 	public String getName(int type, int pos)
 	{
 		return wardrobe[type].get(pos).getName();

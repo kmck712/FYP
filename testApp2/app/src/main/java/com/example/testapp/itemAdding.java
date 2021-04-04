@@ -17,7 +17,20 @@ public class itemAdding extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_adding);
-       wardrobe = new NeuralNet();
+        wardrobe = new NeuralNet();
+        Intent newIntent = getIntent();
+
+       try {
+            wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
+                    newIntent.getDoubleArrayExtra("WARDROBE_WEIGHTS"),
+                    newIntent.getIntArrayExtra("WARDROBE_DIMENSIONS"));
+            // need to change to a parcable and create a constructor which allows this to happen within aiTestMain
+
+        }
+       catch (Exception x)
+       {
+           System.out.println("no item passed");
+       }
     }
 
     public void itemAdd(View view)

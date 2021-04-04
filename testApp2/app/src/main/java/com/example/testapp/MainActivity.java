@@ -19,21 +19,23 @@ public class MainActivity extends AppCompatActivity {
 
 
     private NeuralNet wardrobe;
-    boolean test;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
         Intent newIntent = getIntent();
-        test = newIntent.getBooleanExtra("WARDROBE_PASSED", false);
-        if ( test) {
+
+        try {
             wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
                     newIntent.getDoubleArrayExtra("WARDROBE_WEIGHTS"),
                     newIntent.getIntArrayExtra("WARDROBE_DIMENSIONS"));
                 // need to change to a parcable and create a constructor which allows this to happen within aiTestMain
 
+        }
+        catch (Exception x)
+        {
+            System.out.println("No network ");
         }
 
     }
@@ -41,6 +43,17 @@ public class MainActivity extends AppCompatActivity {
     public void screenSwitch(View view)
     {
         Intent intent = new Intent(this, itemAdding.class) ;
+        try
+        {
+            intent.putExtra("WARDROBE_NAMES", wardrobe.getAllNames());
+            intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights()); // all working here
+            intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getAllClassSize());
+            intent.putExtra("WARDROBE_PASSED", true);
+        }
+        catch (Exception x)
+        {
+            System.out.println("Nothing to Send");
+        }
        startActivity(intent);
        finish();
     }
@@ -55,35 +68,50 @@ public class MainActivity extends AppCompatActivity {
            outTest += "weight " + i + "\n";
        }
 
-       // String output = wardrobe.getAllNames();
-       //((TextView)findViewById(R.id.textView)).setText( output );
+       String output = wardrobe.getAllNames();
+       ((TextView)findViewById(R.id.textView)).setText( outTest + "\n" + output );
     }
+
     public void randomOutfit(View view)
     {
-        if (wardrobe != null)
-        {
+
             wardrobe.running();
             ((TextView) findViewById(R.id.topResultText)).setText(wardrobe.currentBestOutfits[0].getName());
             ((TextView) findViewById(R.id.underResultText)).setText(wardrobe.currentBestOutfits[1].getName());
             ((TextView) findViewById(R.id.bottomResultText)).setText(wardrobe.currentBestOutfits[2].getName());
             ((TextView)findViewById(R.id.textView)).setText("" +wardrobe.currentResult);
-        }
-        else {
-            ((TextView) findViewById(R.id.topResultText)).setText("Please add clothes");
+        try{}
+        catch (Exception X)
+        {
+            ((TextView) findViewById(R.id.topResultText)).setText("Please add clothes: " + X);
         }
     }
     public void accept(View view)
     {
-        wardrobe.outcomeChange(1);
-        ((TextView) findViewById(R.id.topResultText)).setText("");
-        ((TextView) findViewById(R.id.underResultText)).setText("");
-        ((TextView) findViewById(R.id.bottomResultText)).setText("");
+        try{
+            wardrobe.outcomeChange(1);
+            ((TextView) findViewById(R.id.topResultText)).setText("");
+            ((TextView) findViewById(R.id.underResultText)).setText("");
+            ((TextView) findViewById(R.id.bottomResultText)).setText("");
+        }
+        catch (Exception x)
+        {
+            System.out.println("No Outfit Randomised");
+        }
+
     }
     public void decline(View view) {
-       wardrobe.outcomeChange(0);
-       ((TextView) findViewById(R.id.topResultText)).setText("");
-       ((TextView) findViewById(R.id.underResultText)).setText("");
-       ((TextView) findViewById(R.id.bottomResultText)).setText("");
+        try{
+            wardrobe.outcomeChange(0);
+            ((TextView) findViewById(R.id.topResultText)).setText("");
+            ((TextView) findViewById(R.id.underResultText)).setText("");
+            ((TextView) findViewById(R.id.bottomResultText)).setText("");
+        }
+        catch (Exception x)
+        {
+            System.out.println("No Outfit Randomised");
+        }
+
     }
 
 }

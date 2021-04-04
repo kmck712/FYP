@@ -236,7 +236,7 @@ public class aiTestMain  {
 								highest[0] = result;
 								highest[1] = cnt;
 							}
-							outfit.add(new Outfit(sending));
+							outfit.add(new Outfit(sending,0));
 							cnt ++;
 						}
 						else 

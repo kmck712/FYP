@@ -10,42 +10,47 @@ public class Node2 {
 	private double finalOutput;
 	private double delta;
 	private double bias;
-	private double chnageInBias;
+	private double changeInBias;
 
-	Node2() {
+	Node2(int arraySize) {
 
-		Weights = new ArrayList[3];
-		changeInWeights = new ArrayList[3];
+		Weights = new ArrayList[arraySize];
+		changeInWeights = new ArrayList[arraySize];
 		for (int i = 0; i < Weights.length; i++)
 		{
 			Weights[i] = new ArrayList<>();
 			changeInWeights[i] = new ArrayList<>();
 		}
-		bias = 0.5;
-		chnageInBias = 0.0;
+		bias = 0.1;
+		changeInBias = 0.0;
 		delta = 0.0;
 	}
-	Node2(double oldBias)
+	Node2(int arraySize, double oldBias)
 	{
-		Weights = new ArrayList[3];
-		changeInWeights = new ArrayList[3];
+		Weights = new ArrayList[arraySize];
+		changeInWeights = new ArrayList[arraySize];
 		for (int i = 0; i < Weights.length; i++)
 		{
 			Weights[i] = new ArrayList<>();
 			changeInWeights[i] = new ArrayList<>();
 		}
 		bias = oldBias;
-		chnageInBias = 0.0;
+		changeInBias = 0.0;
 		delta = 0.0;
+
 	}
 
-	protected double calculateInputs(ArrayList<Double>inputs, double[] formWeights)
+	protected double calculateInputs(ArrayList<Double>inputs)
 	{
-		double output = formWeights[0]; //basis weight set at 1 so you just add it on
-		for (int i =0; i < inputs.size(); i ++)
-		{
-			output += inputs.get(i)*formWeights[i+ 1];
+		double output = bias; //basis weight set at 1 so you just add it on
+		int cnt = 0;
+		for (ArrayList<Double> i : Weights) {
+			for (double j : i) {
+				output += inputs.get(cnt) * j ;
+				cnt ++;
+			}
 		}
+		//System.out.println(output + "aloha");
 		return output;
 	}
 	protected double[] formatWeights()
@@ -70,18 +75,15 @@ public class Node2 {
 
 	protected void changeAllWeights(double learningRate,  ArrayList <Double> inputs,double Momentum )
 	{
-		//changeAWeight(, learningRate,1,Momentum );
-		int cnt = 1;
-		// look into should be running for 6 times but is running for 12;
-		for (int i = 0; i<  Weights.length; i ++)
-		{
-			for (int j = 0; j < Weights[i].size(); j ++)
-			{
-				System.out.println(" input size " + inputs.size());
-				//System.out.println(" input size " + inputs.size());
-				//changeAWeight(i,j, learningRate,inputs.get(cnt-1),Momentum );
-				System.out.println(" input size " + cnt);
-				cnt ++;
+		double change = learningRate*delta + Momentum+ changeInBias;
+		bias += change;
+		changeInBias = change;
+
+		int cnt = 0;
+		for (int i = 0; i<  Weights.length; i ++) {
+			for (int j = 0; j < Weights[i].size(); j++) {
+				changeAWeight(i, j, learningRate, inputs.get(cnt), Momentum);
+				cnt++;
 			}
 		}
 	}
@@ -90,7 +92,7 @@ public class Node2 {
 	//initalis the weights for the new item
 	public void addNode(int type)
 	{
-		Weights[type-1].add(0.5);
+		Weights[type-1].add(0.1);
 		changeInWeights[type-1].add(0.0);
 	}
 	public void addPassedNode(int type, double weights, double change)
@@ -112,6 +114,11 @@ public class Node2 {
 	public double getBias()
 	{
 		return bias;
+	}
+
+	public double getSize(int pos)
+	{
+		return Weights[pos].size();
 	}
 
 }
