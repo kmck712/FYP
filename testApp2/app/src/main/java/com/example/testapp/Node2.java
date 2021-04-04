@@ -110,6 +110,11 @@ public class Node2 {
 	{
 		return Weights[type].get(pos);
 	}
+	public ArrayList<Double>[] getAllWeights()
+	{
+		return Weights;
+	}
+
 
 	public double getBias()
 	{

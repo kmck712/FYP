@@ -38,20 +38,21 @@ public class NeuralNet  {
 	}
 	//---------------------------------------------------------------------------------------------
 	//this is used for when passing the information back in from different activities
-	public NeuralNet(String passNames, double [] Weights, int[] Dimensions)
+	public NeuralNet(String passNames,double [] outfitsId, double [] Weights, double [] outfitWeights, int[] Dimensions)
 	{
 		String names[] = passNames.split(",");
 		nodeLayer = new Node2(3,Weights[0]);
-		outfitLayer = new Node2(1);
+		outfitLayer = new Node2(1,outfitWeights[0]);
 		wardrobe = new ArrayList[3];
-
+		Outfits = new ArrayList<>();
 		for (int i = 0; i < wardrobe.length; i++) {
 			wardrobe[i] = new ArrayList<Clothes>();
 		}
 
 		//not a fan of this method. must be a better way
 		int count = 0;
-
+		// NEED TO IMPLIMENT THE CHANGE OF WEIGHTS BEING PASSED
+		//ALONG WITH THAT I NEED TO FIND A WAY TO THROW ALL THE WEIGHTS IN TOGETHER IF I WANT TO HAVE HIDDEN LAYERS AND BACK PROPGATION
 		for (int i = 0; i < Dimensions.length; i ++)
 		{
 			for (int j = 0; j < Dimensions[i]; j ++)
@@ -63,6 +64,30 @@ public class NeuralNet  {
 				count++;
 			}
 		}
+
+		for (int i =1; i < outfitWeights.length; i ++)
+		{
+			outfitLayer.addPassedNode(0,i,0);
+		}
+
+		Clothes[] passing = new Clothes[3];
+		for (int i =0; i < (outfitsId.length/3); i ++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				for (Clothes k : wardrobe[j])
+				{
+					if (k.getId() == outfitsId[j + (3*i)])
+					{
+						passing[j] = k;
+						break;
+					}
+				}
+			}
+			Outfits.add(new Outfit(passing, Outfits.size()));
+
+		}
+		System.out.println(getAllOutfits());
 
 
 	}
@@ -301,6 +326,25 @@ public class NeuralNet  {
 		}
 		return (output);
 	}
+
+	public double[] getAllOutfitsId()
+	{
+		ArrayList <Double> output = new ArrayList<Double>();
+		for(Outfit i : Outfits)
+		{
+			for(double j : i.getIndividualId())
+			{
+				output.add(j);
+			}
+		}
+		double [] out = new double[output.size()];
+		for(int i =0; i < output.size(); i ++)
+		{
+			out[i] = output.get(i);
+		}
+
+		return (out);
+	}
 	public String getName(int type, int pos)
 	{
 		return wardrobe[type].get(pos).getName();
@@ -374,6 +418,24 @@ public class NeuralNet  {
 			//System.out.println(" SIIIIIIIIIIIZE " +  getClassSize(i));
 		}
 		return  output;
+	}
+	public  double[] getAllOutfitWeights()
+	{
+		double[] output = new double[totalClassSize() +1];
+
+		output[0] = outfitLayer.getBias();
+		int k = 1; // there has to be a better way to do this then to use k to track the variable
+		//System.out.println(" WEEEEEEEEIGHT l" +  wardrobe.length);
+		for(ArrayList<Double> i : outfitLayer.getAllWeights())
+		{
+			for (double j : i)
+			{
+				output[k] = j;
+				k++;
+			}
+		}
+		return  output;
+
 	}
 
 }

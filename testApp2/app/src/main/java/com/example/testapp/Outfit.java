@@ -37,6 +37,17 @@ public class Outfit{
 	}
 
 	 */
+	protected double [] getIndividualId()
+	{
+		double [] output = new double[outfit.size()];
+		int cnt = 0;
+		for(Clothes i : outfit)
+		{
+			output[cnt] = i.getId();
+			cnt ++;
+		}
+		return output;
+	}
 	protected String getAllItemNames()
 	{
 		String output = "";

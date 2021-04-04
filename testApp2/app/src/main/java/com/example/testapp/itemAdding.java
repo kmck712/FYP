@@ -22,7 +22,9 @@ public class itemAdding extends AppCompatActivity {
 
        try {
             wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
+                    newIntent.getDoubleArrayExtra("WARDROBE_OUTFITS"),
                     newIntent.getDoubleArrayExtra("WARDROBE_WEIGHTS"),
+                    newIntent.getDoubleArrayExtra("WARDROBE_OUTFITWEIGHTS"),
                     newIntent.getIntArrayExtra("WARDROBE_DIMENSIONS"));
             // need to change to a parcable and create a constructor which allows this to happen within aiTestMain
 
@@ -77,6 +79,8 @@ public class itemAdding extends AppCompatActivity {
         intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights()); // all working here
         intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getAllClassSize());
         intent.putExtra("WARDROBE_PASSED", true);
+        intent.putExtra("WARDROBE_OUTFITS", wardrobe.getAllOutfitsId());
+        intent.putExtra("WARDROBE_OUTFITWEIGHTS",wardrobe.getAllOutfitWeights());
         startActivity(intent);
         finish();
     }

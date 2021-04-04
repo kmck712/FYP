@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private NeuralNet wardrobe;
+    private boolean passed = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,8 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
+                    newIntent.getDoubleArrayExtra("WARDROBE_OUTFITS"),
                     newIntent.getDoubleArrayExtra("WARDROBE_WEIGHTS"),
+                    newIntent.getDoubleArrayExtra("WARDROBE_OUTFITWEIGHTS"),
                     newIntent.getIntArrayExtra("WARDROBE_DIMENSIONS"));
+            passed = true;
                 // need to change to a parcable and create a constructor which allows this to happen within aiTestMain
 
         }
@@ -43,17 +47,22 @@ public class MainActivity extends AppCompatActivity {
     public void screenSwitch(View view)
     {
         Intent intent = new Intent(this, itemAdding.class) ;
-        try
+        if (passed == true)
         {
             intent.putExtra("WARDROBE_NAMES", wardrobe.getAllNames());
             intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights()); // all working here
             intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getAllClassSize());
             intent.putExtra("WARDROBE_PASSED", true);
+            intent.putExtra("WARDROBE_OUTFITS", wardrobe.getAllOutfitsId());
+            intent.putExtra("WARDROBE_OUTFITWEIGHTS", wardrobe.getAllOutfitWeights());
         }
+       /* }
         catch (Exception x)
         {
             System.out.println("Nothing to Send");
         }
+
+        */
        startActivity(intent);
        finish();
     }
