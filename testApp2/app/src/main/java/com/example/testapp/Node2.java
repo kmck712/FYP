@@ -42,10 +42,13 @@ public class Node2 {
 
 	protected double calculateInputs(ArrayList<Double>inputs)
 	{
+
 		double output = bias; //basis weight set at 1 so you just add it on
 		int cnt = 0;
+
 		for (ArrayList<Double> i : Weights) {
 			for (double j : i) {
+
 				output += inputs.get(cnt) * j ;
 				cnt ++;
 			}
@@ -110,9 +113,27 @@ public class Node2 {
 	{
 		return Weights[type].get(pos);
 	}
-	public ArrayList<Double>[] getAllWeights()
+
+	public int size()
 	{
-		return Weights;
+		int output =0;
+		for(ArrayList<Double> i : Weights) { for(double j : i) { output++; } }
+		return output;
+	}
+	public double[] getAllWeights()
+	{
+		double [] output = new double [size() + 1];
+		output[0] = bias;
+		int cnt = 1;
+		for(ArrayList<Double> i : Weights)
+		{
+			for(double j : i)
+			{
+				output[cnt] = j;
+				cnt ++;
+			}
+		}
+		return output;
 	}
 
 

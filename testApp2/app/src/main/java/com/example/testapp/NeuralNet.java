@@ -12,6 +12,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class NeuralNet  {
 	public Outfit currentAllBest;
@@ -21,6 +22,7 @@ public class NeuralNet  {
 	private static ArrayList<Clothes>[] wardrobe;
 	private static Node2 nodeLayer; // node layer contains [0] taste node and [1] the synergy node
 	private static Node2 outfitLayer;
+	private static ArrayList <Outfit> chosenList;
 
 	//----------------------------------------------------------------------------------------------
 	//Inital constructor for the Neural network
@@ -33,13 +35,13 @@ public class NeuralNet  {
 		for (int i = 0; i < wardrobe.length; i++) {
 			wardrobe[i] = new ArrayList<>();
 		}
-
-
+		chosenList = new ArrayList<>();
 	}
 	//---------------------------------------------------------------------------------------------
 	//this is used for when passing the information back in from different activities
 	public NeuralNet(String passNames,double [] outfitsId, double [] Weights, double [] outfitWeights, int[] Dimensions)
 	{
+		chosenList = new ArrayList<>();
 		String names[] = passNames.split(",");
 		nodeLayer = new Node2(3,Weights[0]);
 		outfitLayer = new Node2(1,outfitWeights[0]);
@@ -64,10 +66,11 @@ public class NeuralNet  {
 				count++;
 			}
 		}
-
+		System.out.println("passe wieght num " + outfitWeights.length);
 		for (int i =1; i < outfitWeights.length; i ++)
 		{
-			outfitLayer.addPassedNode(0,i,0);
+			outfitLayer.addPassedNode(0,outfitWeights[i],0);
+
 		}
 
 		Clothes[] passing = new Clothes[3];
@@ -173,17 +176,41 @@ public class NeuralNet  {
 
 	private static double execution(Clothes Outfit[])
 	{
+
 		ArrayList <Double> inputs = new ArrayList();
 		inputs = calcInputs(Outfit);
+
 		ArrayList <Double> outfitInputs = new ArrayList();
 		outfitInputs = calcOutfitInputs(Outfit);
-		System.out.println(outfitInputs);
+
 		double output = nodeLayer.calculateInputs(inputs);
 		double output2 = outfitLayer.calculateInputs(outfitInputs);
-		System.out.println("outfit prob " + output2);
-		//double finalOutput = output*output2;
-		//nodeLayer.setFinalOutput(output);
-		return output;
+		//System.out.println("outfit prob " + output);
+		//System.out.println("outfit prob " + output2);
+
+		//This is wrong and needs to be changed so that all there are sepearte weights for he inbetween layer
+		double finalOutput = output + output2;
+		return finalOutput;
+
+	}
+	private static boolean onList(Outfit sentOut)
+	{
+		for (Outfit i : chosenList)
+		{
+			int cnt = 0;
+			for (int j =0; j < 3; j ++ )
+			{
+				if(i.getIndavidualItem(j) == sentOut.getIndavidualItem(j))
+				{
+					cnt++;
+				}
+			}
+			if (cnt == 3)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static Clothes[] outfitProb()
@@ -203,8 +230,8 @@ public class NeuralNet  {
 					//the oufit being sent for get results
 					Outfit sending= new Outfit(new Clothes[]{i, j, k}, 0);
 
-					boolean valid = dupValid(sending, allOutfit);
-					if (valid == true)
+					//boolean valid = dupValid(sending, allOutfit);
+					if (onList(sending))
 					{
 						double result = execution(sending.getIndavidual());
 						//System.out.println("attempt: " + result + "  Highest:" + highest[0]);
@@ -243,11 +270,27 @@ public class NeuralNet  {
 		System.out.println("inputs " + inputs);
 		nodeLayer.setDelta(error);
 		nodeLayer.changeAllWeights(learningRate, inputs, momentum);
+
+		ArrayList <Double> outfitInputs = new ArrayList();
+		outfitInputs = calcOutfitInputs(outfit);
+
+		outfitLayer.setDelta(error);
+		outfitLayer.changeAllWeights(learningRate, outfitInputs,momentum);
+
 	}
 
 	public void outcomeChange(int YorN)
 	{
 		changeAllWeights(YorN-currentResult,currentBestOutfits);
+		if (YorN == 1)
+		{
+			if (chosenList.size() >= Outfits.size()/2)
+			{
+				chosenList.remove(new Random().nextInt(Outfits.size()));
+			}
+			chosenList.add(new Outfit(currentBestOutfits,0));
+
+		}
 		// changeAllWeightsForOutfits(YorN-currentResult,currentBestOutfits);
 	}
 	//---------------------------------------------------------------------------------------------
@@ -265,6 +308,7 @@ public class NeuralNet  {
 					{
 						Outfits.add(new Outfit(new Clothes[]{newItem1,i, j},Outfits.size()));
 						outfitLayer.addNode(1);
+
 					}
 				}
 
@@ -278,6 +322,7 @@ public class NeuralNet  {
 					{
 						Outfits.add(new Outfit(new Clothes[]{i,newItem2,j},Outfits.size()));
 						outfitLayer.addNode(1);
+
 					}
 				}
 				break;
@@ -285,16 +330,17 @@ public class NeuralNet  {
 				Clothes newItem3 = new Clothes(name, 3,wardrobe[2].size());
 				wardrobe[2].add(newItem3);
 				nodeLayer.addNode(type);
-				for(Clothes i : wardrobe[0]) {
-					for(Clothes j : wardrobe[1])
-					{
-						Outfits.add(new Outfit(new Clothes[]{i, j, newItem3},Outfits.size()));
-						outfitLayer.addNode(1);
+					for (Clothes i : wardrobe[0]) {
+						for (Clothes j : wardrobe[1]) {
+							Outfits.add(new Outfit(new Clothes[]{i, j, newItem3}, Outfits.size()));
+							outfitLayer.addNode(1);
+
+						}
 					}
-				}
+
 				break;
 		}
-		System.out.println(getAllOutfits());
+		System.out.println(getAllOutfits() + " number of weights " + getAllOutfitWeights().length);
 	}
 
 
@@ -391,6 +437,10 @@ public class NeuralNet  {
 
 		return output;
 	}
+	public  double[] getAllOutfitWeights()
+	{
+		return  outfitLayer.getAllWeights();
+	}
 	///error above with not providign the rigth results
 	public static int getClassSize(int pos)
 	{
@@ -419,24 +469,7 @@ public class NeuralNet  {
 		}
 		return  output;
 	}
-	public  double[] getAllOutfitWeights()
-	{
-		double[] output = new double[totalClassSize() +1];
 
-		output[0] = outfitLayer.getBias();
-		int k = 1; // there has to be a better way to do this then to use k to track the variable
-		//System.out.println(" WEEEEEEEEIGHT l" +  wardrobe.length);
-		for(ArrayList<Double> i : outfitLayer.getAllWeights())
-		{
-			for (double j : i)
-			{
-				output[k] = j;
-				k++;
-			}
-		}
-		return  output;
-
-	}
 
 }
  

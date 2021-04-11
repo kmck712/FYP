@@ -48,6 +48,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="360dp"
         android:layout_height="179dp"
+        android:background="#9965F4"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/ConfirmChoice"
         app:layout_constraintEnd_toEndOf="parent"

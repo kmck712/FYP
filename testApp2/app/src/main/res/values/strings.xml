@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">testApp</string>
     <string name="cam_button">Camera</string>
-    <string name="switch_but">Switch screen</string>
+    <string name="switch_but">Add Clothes</string>
+    <string name="switch_but2">Wardrobe</string>
     <string name="t_shirt">T-shirt</string>
     <string name="trousers">Trousers</string>
     <string name="over_top">Jacket</string>

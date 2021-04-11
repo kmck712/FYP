@@ -3,6 +3,7 @@ package com.example.testapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +29,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent newIntent = getIntent();
 
+        //Sets up the on click listeners for both of the menu buttons.
+        ((Button)findViewById(R.id.wardrobeButton)).setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v)
+            {
+                screenSwitch(wardrobeActivity.class);
+            }
+        });
+        ((Button)findViewById(R.id.screenSwap)).setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v)
+            {
+                screenSwitch(itemAdding.class);
+            }
+        });
+
         try {
             wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
                     newIntent.getDoubleArrayExtra("WARDROBE_OUTFITS"),
@@ -36,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
             passed = true;
                 // need to change to a parcable and create a constructor which allows this to happen within aiTestMain
 
+
         }
         catch (Exception x)
         {
@@ -44,9 +61,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void screenSwitch(View view)
+
+    public void screenSwitch(Class i )
     {
-        Intent intent = new Intent(this, itemAdding.class) ;
+        Intent intent = new Intent(this, i) ;
         if (passed == true)
         {
             intent.putExtra("WARDROBE_NAMES", wardrobe.getAllNames());
@@ -63,10 +81,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         */
-       startActivity(intent);
-       finish();
+        startActivity(intent);
+        finish();
     }
-
 
     public void drobeTest(View view)
     {
@@ -78,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
        }
 
        String output = wardrobe.getAllNames();
-       ((TextView)findViewById(R.id.textView)).setText( outTest + "\n" + output );
+       //((TextView)findViewById(R.id.textView)).setText( outTest + "\n" + output );
     }
 
     public void randomOutfit(View view)
@@ -88,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.topResultText)).setText(wardrobe.currentBestOutfits[0].getName());
             ((TextView) findViewById(R.id.underResultText)).setText(wardrobe.currentBestOutfits[1].getName());
             ((TextView) findViewById(R.id.bottomResultText)).setText(wardrobe.currentBestOutfits[2].getName());
-            ((TextView)findViewById(R.id.textView)).setText("" +wardrobe.currentResult);
+           // ((TextView)findViewById(R.id.textView)).setText("" +wardrobe.currentResult);
         try{}
         catch (Exception X)
         {
