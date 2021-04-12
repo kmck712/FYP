@@ -10,21 +10,31 @@
         android:id="@+id/backButtonWar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="117dp"
+        android:layout_marginLeft="117dp"
         android:onClick="returnToMain"
         android:text="@string/back"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.949"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/editButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/clotheOptionsSpinner"
+        android:layout_width="228dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="175dp"
+        android:layout_marginLeft="175dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="175dp"
+        android:layout_marginRight="175dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="623dp" />
+        app:layout_constraintTop_toBottomOf="@+id/titleWard"
+        app:layout_constraintVertical_bias="0.032" />
 
     <TextView
         android:id="@+id/titleWard"
@@ -46,17 +56,17 @@
 
     <LinearLayout
         android:id="@+id/clothesListLayourWar"
-        android:layout_width="258dp"
-        android:layout_height="453dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="326dp"
+        android:layout_height="448dp"
         android:background="#9965F4"
         android:orientation="vertical"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleWard"
-        app:layout_constraintVertical_bias="0.201">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.629">
 
         <TextView
             android:id="@+id/textView"
@@ -120,5 +130,195 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/editButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="116dp"
+        android:layout_marginRight="116dp"
+        android:onClick="editSettings"
+        android:text="Edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/backButtonWar"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <LinearLayout
+        android:id="@+id/EditItemWar"
+        android:layout_width="326dp"
+        android:layout_height="453dp"
+        android:background="#9965F4"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.629">
+
+        <TextView
+            android:id="@+id/ItemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/ItemNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Name"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editTextTextPersonName"
+                android:layout_width="83dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textPersonName" />
+
+            <Button
+                android:id="@+id/nameConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="changeName"
+                android:text="@string/confirmation" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/itemTypeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Type"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
+            android:orientation="horizontal">
+
+
+
+            <Spinner
+                android:id="@+id/TypeSpiner"
+                android:layout_width="83dp"
+                android:layout_height="43dp"
+                android:layout_weight="1"
+                android:entries="@array/typeArray" />
+            <Button
+                android:id="@+id/TypeConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="changeType"
+                android:text="@string/confirmation" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/DeleteButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="delete"
+            android:text="Delete" />
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!-- <LinearLayout
+android:id="@+id/EditItemWar"
+android:layout_width="258dp"
+android:layout_height="453dp"
+android:background="#9965F4"
+android:orientation="vertical"
+android:visibility="gone"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintHorizontal_bias="0.529"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent"
+app:layout_constraintVertical_bias="0.629">
+
+<TextView
+    android:id="@+id/ItemName"
+    android:layout_width="match_parent"
+    android:layout_height="61dp"
+    android:text="TextView"
+    android:textSize="30sp" />
+
+<TextView
+    android:id="@+id/ItemNameText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Change Name"
+    android:textSize="24sp" />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="83dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:inputType="textPersonName" />
+    <Button
+        android:id="@+id/nameConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/confirmation" />
+
+</LinearLayout>
+
+<TextView
+    android:id="@+id/itemTypeText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Change Type"
+    android:textSize="24sp" />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="78dp"
+    android:orientation="horizontal">
+
+    <Spinner
+        android:id="@+id/TypeSpiner"
+        android:layout_width="83dp"
+        android:layout_height="43dp"
+        android:layout_weight="1"
+        android:entries="@array/typeArray" />
+    <Button
+        android:id="@+id/TypeConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/confirmation" />
+
+</LinearLayout>
+
+<Button
+    android:id="@+id/cancelButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Cancel" />
+</LinearLayout>
+-->

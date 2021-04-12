@@ -10,4 +10,8 @@
     <string name="itemAddDefault">Please enter the item name and catergory here:</string>
     <string name="list_all">Show all items in the wardrobe</string>
     <string name="back">Back</string>
+    <string name="type1">Top</string>
+    <string name="type2">Under-top</string>
+    <string name="type3">Bottom</string>
+    <string name="confirmation">Confirm</string>
 </resources>

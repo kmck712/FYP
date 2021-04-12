@@ -147,5 +147,10 @@ public class Node2 {
 		return Weights[pos].size();
 	}
 
+	public void removeWeight(int type, int id)
+	{
+		Weights[type].remove(id);
+	}
+
 }
 //CREATE SETTERS AND REMOVE ALL INSTANCE OF INTERCLASS VALUE ALTERING

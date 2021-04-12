@@ -6,12 +6,15 @@ public class Clothes {
 	int inputValue;
 	int type; //type represent the kind of clothing it is. 1 = under top 2 = over top 3 = bottom
 	int id;
+	String imagePath;
 	
-	public Clothes(String name, int type,int id)
+	public Clothes(String name, int type,int id, String photoPath)
 	{
 		this.id = id;
 		this.name = name;
 		this.type = type;
+		imagePath = photoPath;
+
 	}
 	
 	
@@ -37,4 +40,10 @@ public class Clothes {
 	{
 		return(type);
 	}
+	protected void setName(String newName)
+	{
+		name = newName;
+	}
+	protected String getImgPath()
+	{return imagePath;}
 }

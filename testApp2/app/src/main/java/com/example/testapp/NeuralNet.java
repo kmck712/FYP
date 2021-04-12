@@ -39,7 +39,7 @@ public class NeuralNet  {
 	}
 	//---------------------------------------------------------------------------------------------
 	//this is used for when passing the information back in from different activities
-	public NeuralNet(String passNames,double [] outfitsId, double [] Weights, double [] outfitWeights, int[] Dimensions)
+	public NeuralNet(String passNames,double [] outfitsId, double [] Weights, double [] outfitWeights, int[] Dimensions, String[] passedImgPaths)
 	{
 		chosenList = new ArrayList<>();
 		String names[] = passNames.split(",");
@@ -60,7 +60,7 @@ public class NeuralNet  {
 			for (int j = 0; j < Dimensions[i]; j ++)
 			{
 				//addItem(i + 1,names[count]);
-				wardrobe[i].add(new Clothes(names[count],i +1,wardrobe[i].size()));
+				wardrobe[i].add(new Clothes(names[count],i +1,wardrobe[i].size(),passedImgPaths[count]));
 				nodeLayer.addPassedNode(i,Weights[count +1], 0);
 
 				count++;
@@ -295,12 +295,12 @@ public class NeuralNet  {
 	}
 	//---------------------------------------------------------------------------------------------
 	// process to add an item of clothing to the network
-	public void addItem(int type, CharSequence name2)
+	public void addItem(int type, CharSequence name2, String photoDir)
 	{
 		String name = name2.toString();
 		switch (type) {
 			case 1:
-				Clothes newItem1 = new Clothes(name, 1,wardrobe[0].size());
+				Clothes newItem1 = new Clothes(name, 1,wardrobe[0].size(), photoDir);
 				wardrobe[0].add(newItem1);
 				nodeLayer.addNode(type);
 				for(Clothes i : wardrobe[1]) {
@@ -314,7 +314,7 @@ public class NeuralNet  {
 
 				break;
 			case 2:
-				Clothes newItem2 = new Clothes(name, 2,wardrobe[1].size());
+				Clothes newItem2 = new Clothes(name, 2,wardrobe[1].size(),photoDir);
 				wardrobe[1].add(newItem2);
 				nodeLayer.addNode(type);
 				for(Clothes i : wardrobe[0]) {
@@ -327,7 +327,7 @@ public class NeuralNet  {
 				}
 				break;
 			case 3:
-				Clothes newItem3 = new Clothes(name, 3,wardrobe[2].size());
+				Clothes newItem3 = new Clothes(name, 3,wardrobe[2].size(),photoDir);
 				wardrobe[2].add(newItem3);
 				nodeLayer.addNode(type);
 					for (Clothes i : wardrobe[0]) {
@@ -409,7 +409,17 @@ public class NeuralNet  {
 		}
 		return (output);
 	}
+	public String getAllNamesOfType(int type)
+	{
+		String output = "";
 
+			for (int i = 0; i < wardrobe[type].size(); i ++)
+			{
+				output += getName(type,i) + ",";
+			}
+
+		return (output);
+	}
 	public static double getWeight(int type, int pos)
 	{
 		return nodeLayer.getWeight(type,pos);
@@ -437,6 +447,15 @@ public class NeuralNet  {
 
 		return output;
 	}
+	public String getItemInfo(int type, int id)
+	{
+		String output = "";
+		output += "Name: " + wardrobe[type].get(id).getName() + "\n";
+		output += "Type: " + wardrobe[type].get(id).getType()+ "\n";
+		output += "Weight " + nodeLayer.getWeight(type, id)+ "\n";
+		return output;
+	}
+
 	public  double[] getAllOutfitWeights()
 	{
 		return  outfitLayer.getAllWeights();
@@ -459,6 +478,27 @@ public class NeuralNet  {
 		return output;
 	}
 
+	public String[] getAllPaths()
+	{
+		String[] output = new String[totalClassSize() +1];
+		int k = 0;
+		for(int i = 0; i < wardrobe.length; i++)
+		{
+			for (int j = 0; j < getClassSize(i);j ++)
+			{
+				output[k] = wardrobe[i].get(j).getImgPath();
+				k ++;
+
+			}
+		}
+		return  output;
+	}
+
+	public String getPath(Clothes item)
+	{
+		return  item.getImgPath();
+	}
+
 	public static int totalClassSize()
 	{
 		int output = 0;
@@ -469,7 +509,44 @@ public class NeuralNet  {
 		}
 		return  output;
 	}
+	public void removeAnItem(int type,int id)
+	{
+		Clothes oldItem  = wardrobe[type].get(id);
+		wardrobe[oldItem.getType()-1].remove(oldItem.id);
+		nodeLayer.removeWeight(oldItem.getType()-1, oldItem.id);
+		ArrayList<Integer>toBeRemoved = new ArrayList<Integer>();
+		for(int i =0; i < Outfits.size();i ++)
+		{
+			for (Clothes j : Outfits.get(i).getIndavidual())
+			{
+				if(j == oldItem)
+				{
+					toBeRemoved.add(0,i);
+					break;
+				}
+			}
+		}
 
+		for(int i : toBeRemoved)
+		{
+			Outfits.remove(i);
+		}
+	}
+	public void setType(int type, int id, int newType)
+	{
+		Clothes oldItem = wardrobe[type].get(id);
+		removeAnItem(type,id);
+		addItem(newType ,oldItem.getName(), oldItem.getImgPath());
+
+	}
+
+
+
+	public void setName(int type, int id, CharSequence newName)
+	{
+		String name = newName.toString();
+		wardrobe[type].get(id).setName(name);
+	}
 
 }
  
