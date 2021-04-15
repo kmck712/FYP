@@ -51,6 +51,7 @@ public class Node2 {
 
 				output += inputs.get(cnt) * j ;
 				cnt ++;
+
 			}
 		}
 		//System.out.println(output + "aloha");
@@ -72,6 +73,7 @@ public class Node2 {
 	protected void changeAWeight(int type,int pos, double learningRate, double input, double Momentum )
 	{
 		double change = learningRate * delta* input + Momentum *changeInWeights[type].get(pos) ;
+		change = Math.round(change*1000.0)/1000.0;
 		Weights[type].set(pos, Weights[type].get(pos) + change);
 		changeInWeights[type].set(pos, change);
 	}
@@ -81,12 +83,24 @@ public class Node2 {
 		double change = learningRate*delta + Momentum+ changeInBias;
 		bias += change;
 		changeInBias = change;
-
+		bias = Math.round(bias * 1000.0) / 1000.0;
 		int cnt = 0;
 		for (int i = 0; i<  Weights.length; i ++) {
 			for (int j = 0; j < Weights[i].size(); j++) {
 				changeAWeight(i, j, learningRate, inputs.get(cnt), Momentum);
 				cnt++;
+			}
+		}
+	}
+	protected void changeAllWeights(double learningRate,double Momentum )
+	{
+		double change = learningRate*delta + Momentum* changeInBias;
+		bias += change;
+		bias = Math.round(bias * 1000.0) / 1000.0;
+		changeInBias = change;
+		for (int i = 0; i<  Weights.length; i ++) {
+			for (int j = 0; j < Weights[i].size(); j++) {
+				changeAWeight(i, j, learningRate, 1, Momentum);
 			}
 		}
 	}
@@ -141,6 +155,8 @@ public class Node2 {
 	{
 		return bias;
 	}
+
+	public double getDelta(){return delta;}
 
 	public double getSize(int pos)
 	{

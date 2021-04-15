@@ -103,7 +103,8 @@
             <ImageView
                 android:id="@+id/topImage"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:rotation="0" />
 
         </LinearLayout>
 
@@ -120,7 +121,8 @@
             <ImageView
                 android:id="@+id/underTopImage"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:rotation="90" />
         </LinearLayout>
 
         <LinearLayout
@@ -136,7 +138,8 @@
             <ImageView
                 android:id="@+id/bottomImage"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:rotation="90" />
         </LinearLayout>
 
     </LinearLayout>

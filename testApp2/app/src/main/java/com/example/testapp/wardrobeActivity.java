@@ -203,6 +203,7 @@ public class wardrobeActivity extends AppCompatActivity {
         }
     }
 
+
     public void changeName(View view)
     {
         CharSequence name =  ((TextView)findViewById(R.id.editTextTextPersonName)).getText();

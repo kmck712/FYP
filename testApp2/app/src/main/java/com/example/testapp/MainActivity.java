@@ -66,7 +66,11 @@ public class MainActivity extends AppCompatActivity {
         catch (Exception x)
         {
             System.out.println("No network ");
+            passed = true;
+            wardrobe = new NeuralNet();
+            testWardrobe();
         }
+
 
     }
 
@@ -91,22 +95,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         */
+
         startActivity(intent);
         finish();
     }
 
-    public void drobeTest(View view)
-    {
-        // found the issue it's miss classifiy the weights being added by having class 1 as class 0
-       String outTest = "";
-       for (double i: wardrobe.getAllWeights())
-       {
-           outTest += "weight " + i + "\n";
-       }
-
-       String output = wardrobe.getAllNames();
-       //((TextView)findViewById(R.id.textView)).setText( outTest + "\n" + output );
-    }
     public Bitmap setPic(String currentPhotoPath, ImageView imageView) {
 
         // Get the dimensions of the View
@@ -134,6 +127,26 @@ public class MainActivity extends AppCompatActivity {
         return bitmap;
     }
 
+    private void testWardrobe ()
+    {
+        wardrobe.addItem(1,"Hoodie", ""); //1
+        wardrobe.addItem(1,"Plaid Shirt", "");//2
+        wardrobe.addItem(1,"Black Jacket", "");//3
+        wardrobe.addItem(2,"band shirt1", "");//1
+        wardrobe.addItem(2,"band shirt2", "");//2
+        wardrobe.addItem(2,"band shirt3", "");//3
+     /*   wardrobe.addItem(2,"White band Shirt", "");//4
+        wardrobe.addItem(2,"Blue Shirt", "");//5
+        wardrobe.addItem(2,"Orange long sleve Shirt", "");//6
+        wardrobe.addItem(2,"grey band shirt", "");//7
+        wardrobe.addItem(2,"brown shirt", "");//8
+        wardrobe.addItem(2,"polo", "");//9
+
+      */
+        wardrobe.addItem(3,"Blue jeans", "");//1
+        wardrobe.addItem(3,"Black jeans", "");//2
+        wardrobe.addItem(3,"Grey jeans", "");//3
+    }
     public void randomOutfit(View view)
     {
 
@@ -141,10 +154,17 @@ public class MainActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.topResultText)).setText(wardrobe.currentBestOutfits[0].getName());
             ((TextView) findViewById(R.id.underResultText)).setText(wardrobe.currentBestOutfits[1].getName());
             ((TextView) findViewById(R.id.bottomResultText)).setText(wardrobe.currentBestOutfits[2].getName());
-        ((ImageView) findViewById(R.id.topImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[0]),((ImageView) findViewById(R.id.topImage))));
-        ((ImageView) findViewById(R.id.underTopImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[1]),((ImageView) findViewById(R.id.topImage))));
-        ((ImageView) findViewById(R.id.bottomImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[2]),((ImageView) findViewById(R.id.topImage))));
-           // ((TextView)findViewById(R.id.textView)).setText("" +wardrobe.currentResult);
+            try {
+
+                ((ImageView) findViewById(R.id.topImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[0]),((ImageView) findViewById(R.id.topImage))));
+                ((ImageView) findViewById(R.id.underTopImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[1]),((ImageView) findViewById(R.id.underTopImage))));
+                ((ImageView) findViewById(R.id.bottomImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[2]),((ImageView) findViewById(R.id.bottomImage))));
+            }
+            catch (Exception e)
+            {
+
+            }
+
         try{}
         catch (Exception X)
         {
@@ -153,16 +173,18 @@ public class MainActivity extends AppCompatActivity {
     }
     public void accept(View view)
     {
-        try{
-            wardrobe.outcomeChange(1);
+       // try{
+            wardrobe.outcomeChange(4);
             ((TextView) findViewById(R.id.topResultText)).setText("");
             ((TextView) findViewById(R.id.underResultText)).setText("");
             ((TextView) findViewById(R.id.bottomResultText)).setText("");
-        }
-        catch (Exception x)
+      //  }
+       /* catch (Exception x)
         {
             System.out.println("No Outfit Randomised");
         }
+
+        */
 
     }
     public void decline(View view) {
