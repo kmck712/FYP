@@ -30,13 +30,7 @@ public class Outfit{
 	{
 		return outfit.get(pos);
 	}
-	/*protected String getItemName(int id)
-	{
-		String output = outfit.get(id).getName();
-		return output;
-	}
 
-	 */
 	protected double [] getIndividualId()
 	{
 		double [] output = new double[outfit.size()];

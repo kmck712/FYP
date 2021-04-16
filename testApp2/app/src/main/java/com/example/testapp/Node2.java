@@ -42,8 +42,7 @@ public class Node2 {
 
 	protected double calculateInputs(ArrayList<Double>inputs)
 	{
-
-		double output = bias; //basis weight set at 1 so you just add it on
+		double output = 0.0;
 		int cnt = 0;
 
 		for (ArrayList<Double> i : Weights) {
@@ -54,21 +53,9 @@ public class Node2 {
 
 			}
 		}
-		//System.out.println(output + "aloha");
 		return output;
 	}
-	protected double[] formatWeights()
-	{
-		double[] output = new double[0];
-		for (int i = 0; i < Weights.length; i ++)
-		{
-			for(double j : Weights[i])
-			{
 
-			}
-		}
-		return output;
-	}
 
 	protected void changeAWeight(int type,int pos, double learningRate, double input, double Momentum )
 	{
@@ -92,7 +79,7 @@ public class Node2 {
 			}
 		}
 	}
-	protected void changeAllWeights(double learningRate,double Momentum )
+	/*protected void changeAllWeights(double learningRate,double Momentum )
 	{
 		double change = learningRate*delta + Momentum* changeInBias;
 		bias += change;
@@ -104,6 +91,8 @@ public class Node2 {
 			}
 		}
 	}
+
+	 */
 
 	//------------------------------------------------------------------------------------------------
 	//initalis the weights for the new item
@@ -169,4 +158,4 @@ public class Node2 {
 	}
 
 }
-//CREATE SETTERS AND REMOVE ALL INSTANCE OF INTERCLASS VALUE ALTERING
+

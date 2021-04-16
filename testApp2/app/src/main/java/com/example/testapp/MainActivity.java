@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("No network ");
             passed = true;
             wardrobe = new NeuralNet();
-            testWardrobe();
+            //testWardrobe();
         }
 
 
@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
     public void screenSwitch(Class i )
     {
         Intent intent = new Intent(this, i) ;
-        if (passed == true)
-        {
+       // if (passed == true)
+        try {
             intent.putExtra("WARDROBE_NAMES", wardrobe.getAllNames());
             intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights()); // all working here
             intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getAllClassSize());
@@ -88,14 +88,10 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("WARDROBE_OUTFITWEIGHTS", wardrobe.getAllOutfitWeights());
             intent.putExtra("WARDROBE_IMAGE_PATH",wardrobe.getAllPaths());
         }
-       /* }
         catch (Exception x)
         {
             System.out.println("Nothing to Send");
         }
-
-        */
-
         startActivity(intent);
         finish();
     }
@@ -129,12 +125,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void testWardrobe ()
     {
+
+       // wardrobe.addItem(1,"Plaid Shirt", "");//2
+        /*dave
         wardrobe.addItem(1,"Hoodie", ""); //1
-        wardrobe.addItem(1,"Plaid Shirt", "");//2
         wardrobe.addItem(1,"Black Jacket", "");//3
         wardrobe.addItem(2,"band shirt1", "");//1
         wardrobe.addItem(2,"band shirt2", "");//2
         wardrobe.addItem(2,"band shirt3", "");//3
+        wardrobe.addItem(3,"Black jeans", "");//2
+        wardrobe.addItem(3,"Grey jeans", "");//3
+
+         */
+        //Julia
+        wardrobe.addItem(1,"suit jacket", ""); //1
+        wardrobe.addItem(1,"hooide", "");//3
+        wardrobe.addItem(1,"coat", ""); //1
+        wardrobe.addItem(1,"jumper", "");//3
+        wardrobe.addItem(2,"t-shirt", "");//1
+        wardrobe.addItem(2,"smart shirt", "");//2
+        wardrobe.addItem(2,"long sleeve", "");//3
+        wardrobe.addItem(2,"vest", "");//3
+        wardrobe.addItem(3,"jeans", "");//2
+        wardrobe.addItem(3,"smart trousers", "");//3
+        wardrobe.addItem(3,"trousers", "");//2
+        wardrobe.addItem(3,"shorts", "");//3
+
      /*   wardrobe.addItem(2,"White band Shirt", "");//4
         wardrobe.addItem(2,"Blue Shirt", "");//5
         wardrobe.addItem(2,"Orange long sleve Shirt", "");//6
@@ -143,14 +159,24 @@ public class MainActivity extends AppCompatActivity {
         wardrobe.addItem(2,"polo", "");//9
 
       */
-        wardrobe.addItem(3,"Blue jeans", "");//1
-        wardrobe.addItem(3,"Black jeans", "");//2
-        wardrobe.addItem(3,"Grey jeans", "");//3
+      //  wardrobe.addItem(3,"Blue jeans", "");//1
+     //   wardrobe.addItem(3,"Black jeans", "");//2
+       // wardrobe.addItem(3,"Grey jeans", "");//3
     }
     public void randomOutfit(View view)
     {
+        //used to for testing
+          /*  for (int i = 0; i < 5; i++)
+            {
+                wardrobe = new NeuralNet();
+                testWardrobe();
+                wardrobe.running();
+            }
 
+           */
             wardrobe.running();
+
+
             ((TextView) findViewById(R.id.topResultText)).setText(wardrobe.currentBestOutfits[0].getName());
             ((TextView) findViewById(R.id.underResultText)).setText(wardrobe.currentBestOutfits[1].getName());
             ((TextView) findViewById(R.id.bottomResultText)).setText(wardrobe.currentBestOutfits[2].getName());
@@ -173,20 +199,18 @@ public class MainActivity extends AppCompatActivity {
     }
     public void accept(View view)
     {
-       // try{
-            wardrobe.outcomeChange(4);
+        try{
+            wardrobe.outcomeChange(1);
             ((TextView) findViewById(R.id.topResultText)).setText("");
             ((TextView) findViewById(R.id.underResultText)).setText("");
             ((TextView) findViewById(R.id.bottomResultText)).setText("");
-      //  }
-       /* catch (Exception x)
+         }
+        catch (Exception x)
         {
             System.out.println("No Outfit Randomised");
         }
-
-        */
-
     }
+
     public void decline(View view) {
         try{
             wardrobe.outcomeChange(0);
