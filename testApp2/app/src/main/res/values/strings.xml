@@ -6,7 +6,7 @@
     <string name="t_shirt">T-shirt</string>
     <string name="trousers">Trousers</string>
     <string name="over_top">Jacket</string>
-    <string name="confirm">Confirm Outfit</string>
+    <string name="confirm">Confirm Item</string>
     <string name="itemAddDefault">Please enter the item name and catergory here:</string>
     <string name="list_all">Show all items in the wardrobe</string>
     <string name="back">Back</string>
@@ -14,4 +14,5 @@
     <string name="type2">Under-top</string>
     <string name="type3">Bottom</string>
     <string name="confirmation">Confirm</string>
+    <string name="Title">Welcome to Smart Style</string>
 </resources>

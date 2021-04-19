@@ -33,12 +33,14 @@ public class itemAdding extends AppCompatActivity {
         Intent newIntent = getIntent();
 
        try {
-            wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
-                    newIntent.getDoubleArrayExtra("WARDROBE_OUTFITS"),
-                    newIntent.getDoubleArrayExtra("WARDROBE_WEIGHTS"),
-                    newIntent.getDoubleArrayExtra("WARDROBE_OUTFITWEIGHTS"),
-                    newIntent.getIntArrayExtra("WARDROBE_DIMENSIONS"),
-                    newIntent.getStringArrayExtra("WARDROBE_IMAGE_PATH"));
+           Bundle w = newIntent.getBundleExtra("WEIGHTS");
+           double[][] Weights = (double[][]) w.getSerializable("WEIGHTS");
+
+           wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
+                   newIntent.getDoubleArrayExtra("WARDROBE_OUTFITS"),
+                   Weights,
+                   newIntent.getIntArrayExtra("WARDROBE_DIMENSIONS"),
+                   newIntent.getStringArrayExtra("WARDROBE_IMAGE_PATH"));
             // need to change to a parcable and create a constructor which allows this to happen within aiTestMain
 
         }
@@ -107,14 +109,16 @@ public class itemAdding extends AppCompatActivity {
     public void returnToMain(View view)
     {
         Intent intent = new Intent(this, MainActivity.class) ;
-        //intent.putExtra("WARDROBE_OBJECT", wardrobe);
         intent.putExtra("WARDROBE_NAMES", wardrobe.getAllNames());
-        intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights()); // all working here
         intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getAllClassSize());
         intent.putExtra("WARDROBE_PASSED", true);
         intent.putExtra("WARDROBE_OUTFITS", wardrobe.getAllOutfitsId());
-        intent.putExtra("WARDROBE_OUTFITWEIGHTS",wardrobe.getAllOutfitWeights());
         intent.putExtra("WARDROBE_IMAGE_PATH",wardrobe.getAllPaths());
+
+        Bundle weightBundle = new Bundle();
+        weightBundle.putSerializable("WEIGHTS", wardrobe.getAllWeights());
+        intent.putExtras( weightBundle);
+
         startActivity(intent);
         finish();
     }
@@ -180,6 +184,7 @@ public class itemAdding extends AppCompatActivity {
     }
 
     String currentPhotoPath = "";
+
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

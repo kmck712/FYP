@@ -99,19 +99,19 @@
                     android:id="@+id/topButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/over_top" />
+                    android:text="@string/type1" />
 
                 <RadioButton
                     android:id="@+id/underShirtButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/t_shirt" />
+                    android:text="@string/type2" />
 
                 <RadioButton
                     android:id="@+id/bottomsButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/trousers" />
+                    android:text="@string/type3" />
             </RadioGroup>
 
         </LinearLayout>

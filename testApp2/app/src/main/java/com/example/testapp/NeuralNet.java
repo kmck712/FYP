@@ -27,14 +27,12 @@ public class NeuralNet  {
 	private static ArrayList <Outfit> Outfits;
 	private static ArrayList<Clothes>[] wardrobe;
 
-	//layer of the NN network
-	//private static Node2[] nodeLayers;
-	private static Node2[][] hiddenLayers;
-	//private static Node2 outputLayer;
 	private static Network nnFull;
+	//layer of the NN network
+	//private static Node2[][] hiddenLayers;
 
-	private static ArrayList <Outfit> chosenList;
-	private static int numberOfHL, nodesInHL;
+	//private static ArrayList <Outfit> chosenList;
+	//private static int numberOfHL, nodesInHL;
 
 	//----------------------------------------------------------------------------------------------
 	//Inital constructor for the Neural network
@@ -56,57 +54,20 @@ public class NeuralNet  {
 		//adds the output layer
 		nnFull.addNewLayer(1);
 
-		//old hidden layer code which needs to be adapted
-		/*
-		nodesInHL = 3;
-		numberOfHL = 1;
-		hiddenLayers = new Node2[numberOfHL][nodesInHL];
-		for (int i = 0;  i < numberOfHL; i ++)
-		{
-			for(int j = 0; j < nodesInHL; j ++)
-			{
-				hiddenLayers[i][j] = new Node2(1);
-				//cheating a solution, basically means you can't have <2 nodes in a HL
-				if (i == 0 )
-				{
-					for (int k = 0; k < 2; k ++)
-					{
-						hiddenLayers[i][j].addNode(1);
-					}
-				}
-				else {
-					for (int k = 0; k < nodesInHL; k++) {
-						hiddenLayers[i][j].addNode(1);
-					}
-				}
-			}
-		}
-		for (int i =0; i < nodesInHL; i ++) {
-			outputLayer.addNode(1);
-		}
-
-		 */
-		//old code: sets up the list for the blacklisted items.
-		//chosenList = new ArrayList<>();
-		//System.out.println("second layer weights " + nodeLayers[2].size());
 	}
 	//---------------------------------------------------------------------------------------------
 	//this is used for when passing the information back in from different activities
-	public NeuralNet(String passNames,double [] outfitsId, double [] Weights, double [] outfitWeights, int[] Dimensions, String[] passedImgPaths)
+	public NeuralNet(String passNames,double [] outfitsId, double [][] Weights, int[] Dimensions, String[] passedImgPaths)
 	{
-		chosenList = new ArrayList<>();
+		//setting up the wardrobe
 		String names[] = passNames.split(",");
 		wardrobe = new ArrayList[3];
 		Outfits = new ArrayList<>();
 		for (int i = 0; i < wardrobe.length; i++) {
 			wardrobe[i] = new ArrayList<Clothes>();
 		}
-
-		//not a fan of this method. must be a better way
-
-		// NEED TO IMPLIMENT THE CHANGE OF WEIGHTS BEING PASSED
-		//ALONG WITH THAT I NEED TO FIND A WAY TO THROW ALL THE WEIGHTS IN TOGETHER IF I WANT TO HAVE HIDDEN LAYERS AND BACK PROPGATION
-		nnFull = new Network(new Node2[]{new Node2(3,Weights[0]), new Node2(1,outfitWeights[0])});
+		//set's up the network filled with passed weights
+		nnFull = new Network(new Node2[]{new Node2(3,Weights[0][0]), new Node2(1,Weights[1][0])});
 
 		int count = 0;
 		for (int i = 0; i < Dimensions.length; i ++)
@@ -115,44 +76,35 @@ public class NeuralNet  {
 			{
 				//addItem(i + 1,names[count]);
 				wardrobe[i].add(new Clothes(names[count],i +1,wardrobe[i].size(),passedImgPaths[count]));
-				nnFull.addOldWeight(0,0,i,Weights[count +1], 0);
+				nnFull.addOldWeight(0,0,i,Weights[0][count +1], 0);
 				count++;
 			}
 		}
 
-		for (int i =1; i < outfitWeights.length; i ++)
+		for (int i =1; i < Weights[1].length; i ++)
 		{
-			nnFull.addOldWeight(0,1,0,outfitWeights[i],0);
+			nnFull.addOldWeight(0,1,0,Weights[1][i],0);
 
 		}
 
 		Clothes[] passing = new Clothes[3];
-		for (int i =0; i < (outfitsId.length/3); i ++)
-		{
-			for (int j = 0; j < 3; j++)
-			{
-				for (Clothes k : wardrobe[j])
-				{
-					if (k.getId() == outfitsId[j + (3*i)])
-					{
+		for (int i =0; i < (outfitsId.length/3); i ++) {
+			for (int j = 0; j < 3; j++) {
+				for (Clothes k : wardrobe[j]) {
+					if (k.getId() == outfitsId[j + (3 * i)]) {
 						passing[j] = k;
 						break;
 					}
 				}
 			}
 			Outfits.add(new Outfit(passing, Outfits.size()));
-
 		}
 
-		nodesInHL = 3;
-		numberOfHL = 2;
-		hiddenLayers = new Node2[numberOfHL][nodesInHL];
-		for (int i = 0;  i < numberOfHL; i ++)
+		nnFull.addNewLayer(Weights[2][0]);
+
+		for (int i = 1; i < Weights[2].length; i++)
 		{
-			for(int j = 0; j < nodesInHL; j ++)
-			{
-				hiddenLayers[i][j] = new Node2(1);
-			}
+			nnFull.addOldWeight(1,0,0,Weights[2][i],0);
 		}
 	}
 	//---------------------------------------------------------------------------------------------
@@ -199,28 +151,7 @@ public class NeuralNet  {
 
 	}
 
-	/*private static double execution(Clothes Outfit[])
-	{
 
-		ArrayList <Double> inputs = new ArrayList();
-		inputs = calcInputs(Outfit);
-
-		ArrayList <Double> outfitInputs = new ArrayList();
-		outfitInputs = calcOutfitInputs(Outfit);
-
-		//double output = nodeLayers[0].calculateInputs(inputs);
-		//double output2 = nodeLayers[1].calculateInputs(outfitInputs);
-		ArrayList<Double> outputs = new ArrayList<>();
-		outputs.add(nodeLayers[0].calculateInputs(inputs));
-		outputs.add(nodeLayers[1].calculateInputs(outfitInputs));
-
-		//This is wrong and needs to be changed so that all there are sepearte weights for he inbetween layer
-		double finalOutput = hiddenlayerExecution(outputs, 0);
-		return finalOutput;
-
-	}
-
-	 */
 	private static double execution(Clothes Outfit[])
 	{
 
@@ -233,98 +164,6 @@ public class NeuralNet  {
 		return nnFull.execution(inputs,outfitInputs);
 
 	}
-
-	/*private static double hiddenlayerExecution(ArrayList<Double> itemsInputs, int pos)
-	{
-		ArrayList<Double> nextInputs = new ArrayList<>();
-		for(Node2 i : hiddenLayers[pos])
-		{
-			nextInputs.add(i.calculateInputs(itemsInputs));
-		}
-		if (pos == numberOfHL-1)
-		{
-			double output = outputLayer.calculateInputs(nextInputs);
-			return output;
-		}
-		else
-		{
-			hiddenlayerExecution(nextInputs,pos+1);
-		}
-		return 0;
-	}
-
-	 */
-
-	private static boolean onList(Outfit sentOut)
-	{
-		for (Outfit i : chosenList)
-		{
-			int cnt = 0;
-			for (int j =0; j < 3; j ++ )
-			{
-				if(i.getIndavidualItem(j) == sentOut.getIndavidualItem(j))
-				{
-					cnt++;
-				}
-			}
-			if (cnt == 3)
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/*private static Clothes[] outfitProb()
-	{
-		ArrayList <Outfit> allOutfit= new ArrayList();
-		//contains the highest value in index 0 and the highest value idex in index 1
-		double highest[] = {0,0};
-		ArrayList<Double> result = new ArrayList<>();
-		int cnt = 0;
-		// for every possible combinaiton of clothes.
-		for (Clothes i : wardrobe[0])
-		{
-			for (Clothes j : wardrobe[1])
-			{
-				for (Clothes k : wardrobe[2])
-				{
-					//the oufit being sent for get results
-					Outfit sending= new Outfit(new Clothes[]{i, j, k}, 0);
-					result.add(execution(sending.getIndavidual()));
-					double currentResult = execution(sending.getIndavidual());
-					allOutfit.add(sending);
-					cnt ++;
-					//boolean valid = dupValid(sending, allOutfit);
-					if (onList(sending))
-					{
-						result.add(execution(sending.getIndavidual()));
-						//System.out.println("attempt: " + result + "  Highest:" + highest[0]);
-						if (currentResult > highest[0])
-						{
-							highest[0] = currentResult;
-							highest[1] = cnt;
-						}
-
-						allOutfit.add(sending);
-						cnt ++;
-					}
-					else
-					{
-
-					}
-				}
-			}
-		}
-		System.out.println("all results ");
-		for (double i : result)
-		{
-			System.out.println(i);
-		}
-		return allOutfit.get((int) highest[1]).getIndavidual();
-	}
-
-	 */
 
 	private static Clothes[] outfitProb()
 	{
@@ -393,7 +232,6 @@ public class NeuralNet  {
 		Clothes[] bestOutfit = outfitProb();
 		currentResult = execution(bestOutfit);
 		currentBestOutfits = bestOutfit;
-		System.out.println("Best Output " + currentResult);
 	}
 	private  void learnRunning()
 	{
@@ -560,65 +398,13 @@ public class NeuralNet  {
 
 	}
 
-	/*private static void changeAllWeights(double error, Clothes[] outfit)
-	{
-		//Very unstable. only coded to work with the current version of the network being 1 hl and no sigmoid
-		double momentum = 0.2;
-		double learningRate = 0.2;
-		ArrayList <Double> inputs = calcInputs(outfit);
 
-		ArrayList <Double> outfitInputs = calcOutfitInputs(outfit);
-		outputLayer.setDelta(error);
-
-		for(int i =0; i< nodesInHL; i ++)
-		{
-			hiddenLayers[numberOfHL-1][i].setDelta(error*outputLayer.getWeight(0,i));
-
-		}
-		double finalError1 = 0;
-		for (Node2 i : hiddenLayers[0])
-		{
-			finalError1 += i.getDelta() * i.getWeight(0, 0);
-		}
-		double finalError2 = 0;
-		for (Node2 i : hiddenLayers[0])
-		{
-			finalError2 += i.getDelta() * i.getWeight(0, 1);
-		}
-
-		nodeLayers[0].setDelta(finalError1);
-
-		nodeLayers[1].setDelta(finalError2);
-
-
-
-		outputLayer.changeAllWeights(learningRate,momentum);
-		for(int i =0; i< nodesInHL; i ++) {
-			hiddenLayers[numberOfHL - 1][i].changeAllWeights(learningRate, momentum);
-		}
-		nodeLayers[0].changeAllWeights(learningRate, inputs, momentum);
-		nodeLayers[1].changeAllWeights(learningRate, outfitInputs,momentum);
-	}
-
-	 */
 
 	public void outcomeChange(double YorN)
 	{
 		changeAllWeights(YorN-currentResult,currentBestOutfits);
-		/*if (YorN == 1)
-		{
-			if (chosenList.size() >= Outfits.size()/2)
-			{
-				chosenList.remove(new Random().nextInt(Outfits.size()));
-			}
-			chosenList.add(new Outfit(currentBestOutfits,0));
-
-		}
-
-
-		 */
-		// changeAllWeightsForOutfits(YorN-currentResult,currentBestOutfits);
 	}
+
 	//---------------------------------------------------------------------------------------------
 	// process to add an item of clothing to the network
 	public void addItem(int type, CharSequence name2, String photoDir)
@@ -751,7 +537,7 @@ public class NeuralNet  {
 		return nnFull.getWeight(0,type,pos);
 	}
 
-	public static double[] getAllWeights()
+	/*public static double[] getAllWeights()
 	{
 		double[] output = new double[totalClassSize() +1];
 		//System.out.println(" WEEEEEEEEIGHT s " +  (totalClassSize() +1));
@@ -773,6 +559,16 @@ public class NeuralNet  {
 
 		return output;
 	}
+
+	 */
+
+	public static double[][] getAllWeights()
+	{
+		double[][] output = {nnFull.getAllWeights(0,0), nnFull.getAllWeights(0,1), nnFull.getAllWeights(1,0)};
+
+		return output;
+	}
+
 	public String getItemInfo(int type, int id)
 	{
 		String output = "";
@@ -884,4 +680,199 @@ public class NeuralNet  {
 	}
 
 }
- 
+
+//old hidden layer code which needs to be adapted
+		/*
+		nodesInHL = 3;
+		numberOfHL = 1;
+		hiddenLayers = new Node2[numberOfHL][nodesInHL];
+		for (int i = 0;  i < numberOfHL; i ++)
+		{
+			for(int j = 0; j < nodesInHL; j ++)
+			{
+				hiddenLayers[i][j] = new Node2(1);
+				//cheating a solution, basically means you can't have <2 nodes in a HL
+				if (i == 0 )
+				{
+					for (int k = 0; k < 2; k ++)
+					{
+						hiddenLayers[i][j].addNode(1);
+					}
+				}
+				else {
+					for (int k = 0; k < nodesInHL; k++) {
+						hiddenLayers[i][j].addNode(1);
+					}
+				}
+			}
+		}
+		for (int i =0; i < nodesInHL; i ++) {
+			outputLayer.addNode(1);
+		}
+
+		 */
+//old code: sets up the list for the blacklisted items.
+//chosenList = new ArrayList<>();
+//System.out.println("second layer weights " + nodeLayers[2].size());
+
+//----------------------------------------
+/*private static double execution(Clothes Outfit[])
+	{
+
+		ArrayList <Double> inputs = new ArrayList();
+		inputs = calcInputs(Outfit);
+
+		ArrayList <Double> outfitInputs = new ArrayList();
+		outfitInputs = calcOutfitInputs(Outfit);
+
+		//double output = nodeLayers[0].calculateInputs(inputs);
+		//double output2 = nodeLayers[1].calculateInputs(outfitInputs);
+		ArrayList<Double> outputs = new ArrayList<>();
+		outputs.add(nodeLayers[0].calculateInputs(inputs));
+		outputs.add(nodeLayers[1].calculateInputs(outfitInputs));
+
+		//This is wrong and needs to be changed so that all there are sepearte weights for he inbetween layer
+		double finalOutput = hiddenlayerExecution(outputs, 0);
+		return finalOutput;
+
+	}
+
+	 */
+//-------------------------------------------
+/*
+private static boolean onList(Outfit sentOut)
+	{
+		for (Outfit i : chosenList)
+		{
+			int cnt = 0;
+			for (int j =0; j < 3; j ++ )
+			{
+				if(i.getIndavidualItem(j) == sentOut.getIndavidualItem(j))
+				{
+					cnt++;
+				}
+			}
+			if (cnt == 3)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+ */
+//---------------------------------------
+
+	/*private static double hiddenlayerExecution(ArrayList<Double> itemsInputs, int pos)
+	{
+		ArrayList<Double> nextInputs = new ArrayList<>();
+		for(Node2 i : hiddenLayers[pos])
+		{
+			nextInputs.add(i.calculateInputs(itemsInputs));
+		}
+		if (pos == numberOfHL-1)
+		{
+			double output = outputLayer.calculateInputs(nextInputs);
+			return output;
+		}
+		else
+		{
+			hiddenlayerExecution(nextInputs,pos+1);
+		}
+		return 0;
+	}
+
+	 */
+
+
+	/*private static Clothes[] outfitProb()
+	{
+		ArrayList <Outfit> allOutfit= new ArrayList();
+		//contains the highest value in index 0 and the highest value idex in index 1
+		double highest[] = {0,0};
+		ArrayList<Double> result = new ArrayList<>();
+		int cnt = 0;
+		// for every possible combinaiton of clothes.
+		for (Clothes i : wardrobe[0])
+		{
+			for (Clothes j : wardrobe[1])
+			{
+				for (Clothes k : wardrobe[2])
+				{
+					//the oufit being sent for get results
+					Outfit sending= new Outfit(new Clothes[]{i, j, k}, 0);
+					result.add(execution(sending.getIndavidual()));
+					double currentResult = execution(sending.getIndavidual());
+					allOutfit.add(sending);
+					cnt ++;
+					//boolean valid = dupValid(sending, allOutfit);
+					if (onList(sending))
+					{
+						result.add(execution(sending.getIndavidual()));
+						//System.out.println("attempt: " + result + "  Highest:" + highest[0]);
+						if (currentResult > highest[0])
+						{
+							highest[0] = currentResult;
+							highest[1] = cnt;
+						}
+
+						allOutfit.add(sending);
+						cnt ++;
+					}
+					else
+					{
+
+					}
+				}
+			}
+		}
+		System.out.println("all results ");
+		for (double i : result)
+		{
+			System.out.println(i);
+		}
+		return allOutfit.get((int) highest[1]).getIndavidual();
+	}
+
+	 */
+/*private static void changeAllWeights(double error, Clothes[] outfit)
+	{
+		//Very unstable. only coded to work with the current version of the network being 1 hl and no sigmoid
+		double momentum = 0.2;
+		double learningRate = 0.2;
+		ArrayList <Double> inputs = calcInputs(outfit);
+
+		ArrayList <Double> outfitInputs = calcOutfitInputs(outfit);
+		outputLayer.setDelta(error);
+
+		for(int i =0; i< nodesInHL; i ++)
+		{
+			hiddenLayers[numberOfHL-1][i].setDelta(error*outputLayer.getWeight(0,i));
+
+		}
+		double finalError1 = 0;
+		for (Node2 i : hiddenLayers[0])
+		{
+			finalError1 += i.getDelta() * i.getWeight(0, 0);
+		}
+		double finalError2 = 0;
+		for (Node2 i : hiddenLayers[0])
+		{
+			finalError2 += i.getDelta() * i.getWeight(0, 1);
+		}
+
+		nodeLayers[0].setDelta(finalError1);
+
+		nodeLayers[1].setDelta(finalError2);
+
+
+
+		outputLayer.changeAllWeights(learningRate,momentum);
+		for(int i =0; i< nodesInHL; i ++) {
+			hiddenLayers[numberOfHL - 1][i].changeAllWeights(learningRate, momentum);
+		}
+		nodeLayers[0].changeAllWeights(learningRate, inputs, momentum);
+		nodeLayers[1].changeAllWeights(learningRate, outfitInputs,momentum);
+	}
+
+	 */

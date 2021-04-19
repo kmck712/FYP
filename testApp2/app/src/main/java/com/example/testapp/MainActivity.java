@@ -1,29 +1,16 @@
 package com.example.testapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.utils.widget.ImageFilterView;
-import androidx.core.content.FileProvider;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         try {
+            Bundle w = newIntent.getExtras();
+            double[][] Weights = (double[][]) w.getSerializable("WEIGHTS");
+
             wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
                     newIntent.getDoubleArrayExtra("WARDROBE_OUTFITS"),
-                    newIntent.getDoubleArrayExtra("WARDROBE_WEIGHTS"),
-                    newIntent.getDoubleArrayExtra("WARDROBE_OUTFITWEIGHTS"),
+                    Weights,
                     newIntent.getIntArrayExtra("WARDROBE_DIMENSIONS"),
                     newIntent.getStringArrayExtra("WARDROBE_IMAGE_PATH"));
             passed = true;
@@ -65,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         }
         catch (Exception x)
         {
-            System.out.println("No network ");
+            System.out.println("No network " + x);
             passed = true;
             wardrobe = new NeuralNet();
             //testWardrobe();
@@ -81,12 +70,13 @@ public class MainActivity extends AppCompatActivity {
        // if (passed == true)
         try {
             intent.putExtra("WARDROBE_NAMES", wardrobe.getAllNames());
-            intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights()); // all working here
             intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getAllClassSize());
             intent.putExtra("WARDROBE_PASSED", true);
             intent.putExtra("WARDROBE_OUTFITS", wardrobe.getAllOutfitsId());
-            intent.putExtra("WARDROBE_OUTFITWEIGHTS", wardrobe.getAllOutfitWeights());
             intent.putExtra("WARDROBE_IMAGE_PATH",wardrobe.getAllPaths());
+            Bundle weightBundle = new Bundle();
+            weightBundle.putSerializable("WEIGHTS", wardrobe.getAllWeights());
+            intent.putExtras( weightBundle);
         }
         catch (Exception x)
         {
@@ -174,36 +164,32 @@ public class MainActivity extends AppCompatActivity {
             }
 
            */
+        try {
             wardrobe.running();
-
-
             ((TextView) findViewById(R.id.topResultText)).setText(wardrobe.currentBestOutfits[0].getName());
             ((TextView) findViewById(R.id.underResultText)).setText(wardrobe.currentBestOutfits[1].getName());
             ((TextView) findViewById(R.id.bottomResultText)).setText(wardrobe.currentBestOutfits[2].getName());
             try {
 
-                ((ImageView) findViewById(R.id.topImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[0]),((ImageView) findViewById(R.id.topImage))));
-                ((ImageView) findViewById(R.id.underTopImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[1]),((ImageView) findViewById(R.id.underTopImage))));
-                ((ImageView) findViewById(R.id.bottomImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[2]),((ImageView) findViewById(R.id.bottomImage))));
-            }
-            catch (Exception e)
-            {
+                ((ImageView) findViewById(R.id.topImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[0]), ((ImageView) findViewById(R.id.topImage))));
+                ((ImageView) findViewById(R.id.underTopImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[1]), ((ImageView) findViewById(R.id.underTopImage))));
+                ((ImageView) findViewById(R.id.bottomImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[2]), ((ImageView) findViewById(R.id.bottomImage))));
+                ((TextView) findViewById(R.id.mainTitle)).setText(R.string.Title);
+            } catch (Exception e) {
 
             }
+        }
 
-        try{}
         catch (Exception X)
         {
-            ((TextView) findViewById(R.id.topResultText)).setText("Please add clothes: " + X);
+            ((TextView) findViewById(R.id.mainTitle)).setText("Please add clothes: ");
         }
     }
     public void accept(View view)
     {
         try{
             wardrobe.outcomeChange(1);
-            ((TextView) findViewById(R.id.topResultText)).setText("");
-            ((TextView) findViewById(R.id.underResultText)).setText("");
-            ((TextView) findViewById(R.id.bottomResultText)).setText("");
+            clearRandomiser();
          }
         catch (Exception x)
         {
@@ -214,15 +200,24 @@ public class MainActivity extends AppCompatActivity {
     public void decline(View view) {
         try{
             wardrobe.outcomeChange(0);
-            ((TextView) findViewById(R.id.topResultText)).setText("");
-            ((TextView) findViewById(R.id.underResultText)).setText("");
-            ((TextView) findViewById(R.id.bottomResultText)).setText("");
+            clearRandomiser();
         }
         catch (Exception x)
         {
             System.out.println("No Outfit Randomised");
         }
 
+    }
+
+    private void clearRandomiser()
+    {
+        ((TextView) findViewById(R.id.topResultText)).setText("");
+        ((TextView) findViewById(R.id.underResultText)).setText("");
+        ((TextView) findViewById(R.id.bottomResultText)).setText("");
+
+        ((ImageView) findViewById(R.id.topImage)).setImageBitmap(null);
+        ((ImageView) findViewById(R.id.underTopImage)).setImageBitmap(null);
+        ((ImageView) findViewById(R.id.bottomImage)).setImageBitmap(null);
     }
 
 

@@ -54,6 +54,10 @@ public class Network {
 		nodeLayers.add(createNodes(nodesIn,nodeLayers.get(0).length));
 
 	}
+	public void addNewLayer(double Weights)
+	{
+		nodeLayers.add(new Node2[]{new Node2(3, Weights)});
+	}
 
 	private Node2[] createNodes(int size, int previousLayer)
 	{
@@ -131,4 +135,9 @@ public class Network {
 
 		return  nodeLayers.get(1)[0].calculateInputs(toArrayList(outputs.get(0)));
 	}
+
+	public int getNumberOfLayers()
+	{return nodeLayers.size();}
+
+	public int getNumberOfWeights(int layer){return 0;}
 }

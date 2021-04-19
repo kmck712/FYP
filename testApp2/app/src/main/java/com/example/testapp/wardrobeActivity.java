@@ -26,10 +26,12 @@ public class wardrobeActivity extends AppCompatActivity {
         //TextView clothesList = (TextView) findViewById(R.id.clothesListWar);
        // clothesList.setMovementMethod(new ScrollingMovementMethod());
         try {
+            Bundle w = newIntent.getExtras();
+            double[][] Weights = (double[][]) w.getSerializable("WEIGHTS");
+
             wardrobe = new NeuralNet(newIntent.getStringExtra("WARDROBE_NAMES"),
                     newIntent.getDoubleArrayExtra("WARDROBE_OUTFITS"),
-                    newIntent.getDoubleArrayExtra("WARDROBE_WEIGHTS"),
-                    newIntent.getDoubleArrayExtra("WARDROBE_OUTFITWEIGHTS"),
+                    Weights,
                     newIntent.getIntArrayExtra("WARDROBE_DIMENSIONS"),
                     newIntent.getStringArrayExtra("WARDROBE_IMAGE_PATH"));
             //passed = true;
@@ -254,12 +256,15 @@ public class wardrobeActivity extends AppCompatActivity {
         //intent.putExtra("WARDROBE_OBJECT", wardrobe);
         try {
             intent.putExtra("WARDROBE_NAMES", wardrobe.getAllNames());
-            intent.putExtra("WARDROBE_WEIGHTS", wardrobe.getAllWeights()); // all working here
             intent.putExtra("WARDROBE_DIMENSIONS", wardrobe.getAllClassSize());
             intent.putExtra("WARDROBE_PASSED", true);
             intent.putExtra("WARDROBE_OUTFITS", wardrobe.getAllOutfitsId());
-            intent.putExtra("WARDROBE_OUTFITWEIGHTS", wardrobe.getAllOutfitWeights());
             intent.putExtra("WARDROBE_IMAGE_PATH",wardrobe.getAllPaths());
+            Bundle weightBundle = new Bundle();
+            weightBundle.putSerializable("WEIGHTS", wardrobe.getAllWeights());
+            intent.putExtras( weightBundle);
+
+
         }
         catch (Exception e)
         {
