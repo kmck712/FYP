@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:scrollbarStyle="insideOverlay"
     tools:context=".itemAdding">
 
@@ -92,8 +93,8 @@
 
             <RadioGroup
                 android:id="@+id/itemTypeGroup"
-                android:layout_width="115dp"
-                android:layout_height="179dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <RadioButton
                     android:id="@+id/topButton"

@@ -2,17 +2,16 @@ package com.example.testapp;
 
 import java.util.ArrayList;
 
-public class Node2 {
+public class Node {
 
 
 	private ArrayList<Double>[] Weights;
 	private ArrayList<Double>[] changeInWeights;
-	private double finalOutput;
 	private double delta;
 	private double bias;
 	private double changeInBias;
 
-	Node2(int arraySize) {
+	Node(int arraySize) {
 
 		Weights = new ArrayList[arraySize];
 		changeInWeights = new ArrayList[arraySize];
@@ -25,7 +24,7 @@ public class Node2 {
 		changeInBias = 0.0;
 		delta = 0.0;
 	}
-	Node2(int arraySize, double oldBias)
+	Node(int arraySize, double oldBias)
 	{
 		Weights = new ArrayList[arraySize];
 		changeInWeights = new ArrayList[arraySize];
@@ -42,15 +41,13 @@ public class Node2 {
 
 	protected double calculateInputs(ArrayList<Double>inputs)
 	{
-		double output = 0.0;
+		double output = 0;
 		int cnt = 0;
-
 		for (ArrayList<Double> i : Weights) {
 			for (double j : i) {
 
 				output += inputs.get(cnt) * j ;
 				cnt ++;
-
 			}
 		}
 		return output;

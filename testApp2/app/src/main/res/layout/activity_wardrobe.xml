@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     tools:context=".wardrobeActivity">
 
     <Button
@@ -20,41 +21,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Spinner
-        android:id="@+id/clotheOptionsSpinner"
-        android:layout_width="228dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="175dp"
-        android:layout_marginLeft="175dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="175dp"
-        android:layout_marginRight="175dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleWard"
-        app:layout_constraintVertical_bias="0.032" />
-
-    <TextView
-        android:id="@+id/titleWard"
+    <Button
+        android:id="@+id/editButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="175dp"
-        android:layout_marginLeft="175dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="176dp"
-        android:layout_marginRight="176dp"
-        android:lines="1"
-        android:text="Your Wardrobe"
-        android:textAllCaps="false"
-        android:textColor="#673AB7"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        android:layout_marginEnd="116dp"
+        android:layout_marginRight="116dp"
+        android:onClick="editSettings"
+        android:text="Edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/backButtonWar"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
         android:id="@+id/clothesListLayourWar"
@@ -132,21 +112,6 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/editButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="116dp"
-        android:layout_marginRight="116dp"
-        android:onClick="editSettings"
-        android:text="Edit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/backButtonWar"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
     <LinearLayout
         android:id="@+id/EditItemWar"
         android:layout_width="326dp"
@@ -161,6 +126,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.629">
 
+
+
         <TextView
             android:id="@+id/ItemName"
             android:layout_width="match_parent"
@@ -168,38 +135,6 @@
             android:text="TextView"
             android:textSize="20sp"
             android:translationY="10dp" />
-
-        <TextView
-            android:id="@+id/ItemNameText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Change Name"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/editTextTextPersonName"
-                android:layout_width="83dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textPersonName" />
-
-            <Button
-                android:id="@+id/nameConfirm"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="changeName"
-                android:text="@string/confirmation" />
-
-        </LinearLayout>
-
         <TextView
             android:id="@+id/itemTypeText"
             android:layout_width="match_parent"
@@ -208,13 +143,11 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="78dp"
             android:orientation="horizontal">
-
-
-
             <Spinner
                 android:id="@+id/TypeSpiner"
                 android:layout_width="83dp"
@@ -230,8 +163,40 @@
                 android:onClick="changeType"
                 android:text="@string/confirmation" />
 
-        </LinearLayout>
 
+
+        </LinearLayout>
+        <TextView
+            android:id="@+id/ItemNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Name"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:orientation="horizontal">
+
+
+
+            <EditText
+                android:id="@+id/editTextTextPersonName"
+                android:layout_width="83dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textPersonName" />
+            <Button
+                android:id="@+id/nameConfirm"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="changeName"
+                android:text="@string/confirmation" />
+
+        </LinearLayout>
         <Button
             android:id="@+id/DeleteButton"
             android:layout_width="wrap_content"
@@ -240,7 +205,44 @@
             android:text="Delete"
             android:translationX="130dp" />
 
+
     </LinearLayout>
+
+    <Spinner
+        android:id="@+id/clotheOptionsSpinner"
+        android:layout_width="228dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="175dp"
+        android:layout_marginLeft="175dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="175dp"
+        android:layout_marginRight="175dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleWard"
+        app:layout_constraintVertical_bias="0.032" />
+
+    <TextView
+        android:id="@+id/titleWard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="175dp"
+        android:layout_marginLeft="175dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="176dp"
+        android:layout_marginRight="176dp"
+        android:lines="1"
+        android:text="Your Wardrobe"
+        android:textAllCaps="false"
+        android:textColor="#673AB7"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

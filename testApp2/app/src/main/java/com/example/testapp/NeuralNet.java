@@ -8,13 +8,6 @@ package com.example.testapp;
  *
  */
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import org.w3c.dom.Node;
-
-import java.lang.reflect.Type;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -59,6 +52,7 @@ public class NeuralNet  {
 	//this is used for when passing the information back in from different activities
 	public NeuralNet(String passNames,double [] outfitsId, double [][] Weights, int[] Dimensions, String[] passedImgPaths)
 	{
+		//fIIIIIIIIIIIIIX
 		//setting up the wardrobe
 		String names[] = passNames.split(",");
 		wardrobe = new ArrayList[3];
@@ -67,7 +61,7 @@ public class NeuralNet  {
 			wardrobe[i] = new ArrayList<Clothes>();
 		}
 		//set's up the network filled with passed weights
-		nnFull = new Network(new Node2[]{new Node2(3,Weights[0][0]), new Node2(1,Weights[1][0])});
+		nnFull = new Network(new Node[]{new Node(3,Weights[0][0]), new Node(1,Weights[1][0])});
 
 		int count = 0;
 		for (int i = 0; i < Dimensions.length; i ++)
@@ -125,6 +119,10 @@ public class NeuralNet  {
 				}
 			}
 			cnt++;
+			if(cnt > 2)
+			{
+				break;
+			}
 		}
 		return inputs;
 
@@ -154,13 +152,13 @@ public class NeuralNet  {
 
 	private static double execution(Clothes Outfit[])
 	{
-
+		//to calculate the inputs for the individual items
 		ArrayList <Double> inputs = new ArrayList();
 		inputs = calcInputs(Outfit);
-
+		//to calculate the inputs for which outfit is being calculated
 		ArrayList <Double> outfitInputs = new ArrayList();
 		outfitInputs = calcOutfitInputs(Outfit);
-		double test =nnFull.execution(inputs,outfitInputs);
+		//returns the output from the neural network
 		return nnFull.execution(inputs,outfitInputs);
 
 	}
@@ -172,35 +170,29 @@ public class NeuralNet  {
 		ArrayList<Double> result = new ArrayList<>();
 		// for every possible combinaiton of clothes.
 		for (Clothes i : wardrobe[0])
-		{
-			for (Clothes j : wardrobe[1])
-			{
-				for (Clothes k : wardrobe[2])
+		{ for (Clothes j : wardrobe[1])
+			{ for (Clothes k : wardrobe[2])
 				{
-					//the oufit being sent for get results
+					//the outfit being sent for get results
 					Outfit sending= new Outfit(new Clothes[]{i, j, k}, 0);
+					//computing the output within the network
 					result.add(execution(sending.getIndavidual()));
-					double currentResult = execution(sending.getIndavidual());
+					//adding outfit to list of processed outfits
 					allOutfit.add(sending);
-					//boolean valid = dupValid(sending, allOutfit);
-					result.add(execution(sending.getIndavidual()));
-					allOutfit.add(sending);
-
-				}
-			}
-		}
+				} } }
+		//for the total value of the outputs
 		double total = 0.0;
 		for(Double i : result){total +=i;};
-
+		//choosing a random value between 0 and the sum of the outputs
 		double rng = (new Random().nextDouble() * (total -0.0)) + 0.0;
+		//used to store the position in the outfits represented by the usm of outputs
 		double sum = 0;
-		//System.out.println("NEW LOOP ----------------");
-		//System.out.println("Sum: " + total + " rng " + rng);
 		for(int j = 0; j < result.size(); j ++)
 		{
 			sum +=result.get(j);
 			if (rng < sum)
 			{
+				//returns the outfit when the sum value is within range
 				return allOutfit.get(j).getIndavidual();
 			}
 		}
@@ -213,17 +205,7 @@ public class NeuralNet  {
 		//System.out.println("outfits " + Outfits.size());
 		//System.out.println("Weights " + getAllItemInfo());
 		//learnRunning();
-
 		//System.out.println("TEST RESUKTS " + testRunning());
-		//currentAllBest = new Outfit(bestOutfit);
-		/*ArrayList<Integer> goodOut = new ArrayList();
-		for (int i = 0; i < 5; i ++)
-		{
-			NeuralNet dave = new NeuralNet();
-			dave.learnRunning();
-
-			System.out.println("TEST RESUKTS " + dave.testRunning());
-		}*/
 
 
 	}
@@ -241,7 +223,7 @@ public class NeuralNet  {
 			currentResult = execution(bestOutfit);
 			currentBestOutfits = bestOutfit;
 			int score = preferences();
-			if (score > 1)
+			if (score > 0)
 			{
 				outcomeChange(1);
 			}
@@ -264,7 +246,7 @@ public class NeuralNet  {
 			currentResult = execution(bestOutfit);
 			currentBestOutfits = bestOutfit;
 			int score = preferences();
-			if (score > 1)
+			if (score > 0)
 			{
 				goodOutfits ++;
 			}
@@ -273,127 +255,120 @@ public class NeuralNet  {
 		//System.out.println("good outfits " + goodOutfits);
 		return goodOutfits;
 	}
-	private int preferences()
+	//dave
+	/*private int preferences()
 	{
-		int score = 0;
-			ArrayList[] synergies;
-			synergies = scores(0,currentBestOutfits[0].getId());
-
-			if(synergies[0].contains(currentBestOutfits[1].getId()))
-			{
-				score++;
-			}
-			if(synergies[1].contains(currentBestOutfits[2].getId()))
-			{
-				score++;
-			}
-
-			synergies = scores(1,currentBestOutfits[2].getId());
-
-			if(synergies[0].contains(currentBestOutfits[1].getId()))
-			{
-				score++;
-	    	}
-		//dave taste list
-
-		return score;
-	};
-	/*private ArrayList[] scores(int type, int id)
-	{
-		ArrayList<Integer> checking[] = new ArrayList[2];
-		checking[1] = new ArrayList<>();
-		checking[0] = new ArrayList<>();
-		switch (type){
-			case 0:
-				switch (id)
-				{
-					case 0:
-						checking[0].addAll(Arrays.asList(0,1));
-						checking[1].addAll(Arrays.asList(1));
-						break;
-					case 1:
-						checking[0].addAll(Arrays.asList(1,2));
-						checking[1].addAll(Arrays.asList(0));
-						break;
-
-				}
-				break;
-			case 1:
-				switch (id)
-				{
-					case 0:
-						checking[0].addAll(Arrays.asList(0,1,2));
-						break;
-					case 1:
-						checking[0].addAll(Arrays.asList(1));
-						break;
-				}
+		int output = 0;
+		if (currentBestOutfits[0].getId() == 0)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			int secondId = currentBestOutfits[2].getId();
+			if(firstId == 0);
+			{ output++;}
+			if(firstId == 1){output--;}
+			if(secondId==1){output++;}
 		}
-
-		return checking;
-
+		if (currentBestOutfits[0].getId() == 1)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			int secondId = currentBestOutfits[2].getId();
+			if(firstId == 1){ output++;}
+			if(secondId==0){output++;}
+		}
+		if (currentBestOutfits[2].getId() == 0)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			if(firstId == 2){ output++;}
+			if(firstId == 0|| firstId == 1){ output--;}
+		}
+		if (currentBestOutfits[2].getId() == 1)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			if( firstId == 1){ output--;}
+		}
+		return output;
 	}
 
 	 */
-	private ArrayList[] scores(int type, int id)
+
+	//julia
+	private int preferences()
 	{
-		ArrayList<Integer> checking[] = new ArrayList[2];
-		checking[1] = new ArrayList<>();
-		checking[0] = new ArrayList<>();
-		switch (type){
-			case 0:
-				switch (id)
-				{
-					case 0:
-						checking[0].addAll(Arrays.asList(1));
-						checking[1].addAll(Arrays.asList(1,2));
-						break;
-					case 1:
-						checking[0].addAll(Arrays.asList(0,2));
-						checking[1].addAll(Arrays.asList(0,3));
-						break;
-					case 2:
-						checking[0].addAll(Arrays.asList(0,1,2));
-						checking[1].addAll(Arrays.asList(1,2));
-						break;
-					case 3:
-						checking[0].addAll(Arrays.asList(0,3));
-						checking[1].addAll(Arrays.asList(0,2));
-						break;
-				}
-				break;
-			case 1:
-				switch (id)
-				{
-					case 0:
-						checking[0].addAll(Arrays.asList(1,2,3));
-						break;
-					case 1:
-						checking[0].addAll(Arrays.asList(0));
-						break;
-					case 2:
-						checking[0].addAll(Arrays.asList(0,2,3));
-						break;
-					case 3:
-						checking[0].addAll(Arrays.asList(1));
-						break;
-				}
+		int output = 0;
+		if (currentBestOutfits[0].getId() == 0)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			int secondId = currentBestOutfits[2].getId();
+			if(firstId == 0){ output--;}
+			if(firstId == 2){ output--;}
+			if(firstId == 4){ output--;}
+			if(firstId ==3){ output++;}
+
+			if(secondId==0){output++;}
+			if(secondId==2){output--;}
+		}
+		if (currentBestOutfits[0].getId() == 1)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			int secondId = currentBestOutfits[2].getId();
+			if(firstId == 0){ output++;}
+			if(firstId == 4){ output++;}
+			if(firstId ==3){ output--;}
+
+		}
+		if (currentBestOutfits[0].getId() == 2)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			int secondId = currentBestOutfits[2].getId();
+			if(firstId == 2){ output--;}
+
+			if(secondId==0){output++;}
+			if(secondId==1){output++;}
+			if(secondId==2){output--;}
+		}
+		if (currentBestOutfits[0].getId() == 3)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			int secondId = currentBestOutfits[2].getId();
+			if(secondId==1){output++;}
+			if(secondId==2){output--;}
+		}
+		if (currentBestOutfits[2].getId() == 0)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			if(firstId == 2){ output--;}
+			if(firstId == 4){ output--;}
+			if(firstId == 3){ output++;}
+		}
+		if (currentBestOutfits[2].getId() == 1)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			if(firstId == 1){ output++;}
+		}
+		if (currentBestOutfits[2].getId() == 2)
+		{
+			int firstId = currentBestOutfits[1].getId();
+			if(firstId == 2){ output++;}
 		}
 
-		return checking;
-
+		return output;
 	}
+
+
 	//-----------------------------------------------------------------------------------------------
 	private static void changeAllWeights(double error, Clothes[] outfit)
 	{
-		//Very unstable. only coded to work with the current version of the network being 1 hl and no sigmoid
-		double momentum = 0.2;
-		double learningRate = 0.3;
+		//setting up momentum and learning rate for the learning of the neural network
+		double momentum = 0.35;
+		double learningRate = 0.25;
+		//the initial inputs used  for the outfit
 		ArrayList <Double> inputs = calcInputs(outfit);
 		ArrayList <Double> outfitInputs = calcOutfitInputs(outfit);
 
+		//sets the network up with the outputs and results of the current outfit
 		nnFull.calculateInitialOutput(inputs, outfitInputs);
-		nnFull.calculateOutput(1);
+		nnFull.calculateOutput();
+		//starts the changing of the weights of the network.
 		nnFull.changeNodes(error , learningRate, momentum, inputs, outfitInputs);
 
 	}
@@ -656,7 +631,6 @@ public class NeuralNet  {
 				}
 			}
 		}
-
 		for(int i : toBeRemoved)
 		{
 			nnFull.removeWeight(0,1,0,i);
@@ -876,3 +850,119 @@ private static boolean onList(Outfit sentOut)
 	}
 
 	 */
+
+/*private int preferences()
+	{
+		int score = 0;
+			ArrayList[] synergies;
+			synergies = scores(0,currentBestOutfits[0].getId());
+
+			if(synergies[0].contains(currentBestOutfits[1].getId()))
+			{
+				score++;
+			}
+			if(synergies[1].contains(currentBestOutfits[2].getId()))
+			{
+				score++;
+			}
+
+			synergies = scores(1,currentBestOutfits[2].getId());
+
+			if(synergies[0].contains(currentBestOutfits[1].getId()))
+			{
+				score++;
+	    	}
+		//dave taste list
+
+		return score;
+	};
+
+	private ArrayList[] scores(int type, int id)
+	{
+		ArrayList<Integer> checking[] = new ArrayList[2];
+		checking[1] = new ArrayList<>();
+		checking[0] = new ArrayList<>();
+		switch (type){
+			case 0:
+				switch (id)
+				{
+					case 0:
+						checking[0].addAll(Arrays.asList(0,1));
+						checking[1].addAll(Arrays.asList(1));
+						break;
+					case 1:
+						checking[0].addAll(Arrays.asList(1,2));
+						checking[1].addAll(Arrays.asList(0));
+						break;
+
+				}
+				break;
+			case 1:
+				switch (id)
+				{
+					case 0:
+						checking[0].addAll(Arrays.asList(0,1,2));
+						break;
+					case 1:
+						checking[0].addAll(Arrays.asList(1));
+						break;
+				}
+		}
+
+		return checking;
+
+	}
+
+	 */
+
+//*/
+	/*private ArrayList[] scores(int type, int id)
+	{
+		ArrayList<Integer> checking[] = new ArrayList[2];
+		checking[1] = new ArrayList<>();
+		checking[0] = new ArrayList<>();
+		switch (type){
+			case 0:
+				switch (id)
+				{
+					case 0:
+						checking[0].addAll(Arrays.asList(1));
+						checking[1].addAll(Arrays.asList(1,2));
+						break;
+					case 1:
+						checking[0].addAll(Arrays.asList(0,2));
+						checking[1].addAll(Arrays.asList(0,3));
+						break;
+					case 2:
+						checking[0].addAll(Arrays.asList(0,1,2));
+						checking[1].addAll(Arrays.asList(1,2));
+						break;
+					case 3:
+						checking[0].addAll(Arrays.asList(0,3));
+						checking[1].addAll(Arrays.asList(0,2));
+						break;
+				}
+				break;
+			case 1:
+				switch (id)
+				{
+					case 0:
+						checking[0].addAll(Arrays.asList(1,2,3));
+						break;
+					case 1:
+						checking[0].addAll(Arrays.asList(0));
+						break;
+					case 2:
+						checking[0].addAll(Arrays.asList(0,2,3));
+						break;
+					case 3:
+						checking[0].addAll(Arrays.asList(1));
+						break;
+				}
+		}
+
+		return checking;
+
+
+	}
+	*/

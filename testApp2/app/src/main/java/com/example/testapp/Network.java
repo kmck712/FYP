@@ -1,30 +1,24 @@
 package com.example.testapp;
 
-import org.w3c.dom.Node;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Network {
 
-	//convet to storing nodes a as an array of node in a list per layer
+	//stores the output of each layer in the network
 	ArrayList<Double[]> outputs;
-	ArrayList<Node2[]> nodeLayers;
+	//Stores the layers of nodes in the network including hidden,input and output layers
+	ArrayList<Node[]> nodeLayers;
 
-	Network()
-	{
+	Network() {
+		//initialises each array list
 		nodeLayers = new ArrayList();
 		outputs = new ArrayList<>();
-		//need to have this rely on the inputs in the layer
-		for (int i =0; i < 3; i ++)
-		{
-			outputs.add(null);
 
-		}
 	}
 
 	//need to have it so it takes the other layers as well
-	Network(Node2[] oldNodes)
+	Network(Node[] oldNodes)
 	{
 		nodeLayers = new ArrayList();
 		outputs = new ArrayList<>();
@@ -46,25 +40,27 @@ public class Network {
 	}
 	public void addNewLayer()
 	{
-		nodeLayers.add(new Node2[] {new Node2(3), new Node2(1)});
+		nodeLayers.add(new Node[] {new Node(3), new Node(1)});
+		outputs.add(null);
 	}
 
 	public void addNewLayer(int nodesIn)
 	{
 		nodeLayers.add(createNodes(nodesIn,nodeLayers.get(0).length));
+		outputs.add(null);
 
 	}
 	public void addNewLayer(double Weights)
 	{
-		nodeLayers.add(new Node2[]{new Node2(3, Weights)});
+		nodeLayers.add(new Node[]{new Node(3, Weights)});
 	}
 
-	private Node2[] createNodes(int size, int previousLayer)
+	private Node[] createNodes(int size, int previousLayer)
 	{
-		Node2[] output = new Node2[2];
+		Node[] output = new Node[size];
 		for (int i = 0; i < size; i ++)
 		{
-			output[i] = new Node2(1);
+			output[i] = new Node(1);
 			for(int j = 0; j < previousLayer; j ++) {
 				output[i].addNode(1);
 			}
@@ -81,7 +77,7 @@ public class Network {
 		outputs.set(0,new Double[]{nodeLayers.get(0)[0].calculateInputs(input1), nodeLayers.get(0)[1].calculateInputs(input2)});
 
 	}
-	public void calculateOutput(int layer)
+	public void calculateOutput()
 	{
 		//layer would be used when layers are introduced for now it;s just for the output layer
 		ArrayList <Double> inputs = new ArrayList<>();
@@ -130,10 +126,23 @@ public class Network {
 
 	public double execution(ArrayList inputs1, ArrayList inputs2)
 	{
-		//layer 1
+		//Computes the outputs for the first layer of inputs
 		outputs.set(0, new Double[]{nodeLayers.get(0)[0].calculateInputs(inputs1), nodeLayers.get(0)[1].calculateInputs(inputs2)});
 
-		return  nodeLayers.get(1)[0].calculateInputs(toArrayList(outputs.get(0)));
+		//computes all of the hidden layer node output
+		for (int i = 1; i < nodeLayers.size(); i ++)
+		{
+			//calculates the outputs for the layer and stores them for the next layer to use
+			Double [] layerOutputs = new Double[nodeLayers.get(i).length];
+			for (int j = 0; j < nodeLayers.get(i).length; j ++)
+			{
+				//calculates the output based on the previous output
+				layerOutputs[j] = nodeLayers.get(i)[j].calculateInputs(toArrayList(outputs.get(i-1)));
+			}
+			outputs.set(i,layerOutputs);
+		}
+		return outputs.get(outputs.size()-1)[0];
+		//return  nodeLayers.get(1)[0].calculateInputs(toArrayList(outputs.get(outputs.size())));
 	}
 
 	public int getNumberOfLayers()

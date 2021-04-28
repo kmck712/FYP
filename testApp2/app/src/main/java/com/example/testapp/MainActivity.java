@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("No network " + x);
             passed = true;
             wardrobe = new NeuralNet();
-            //testWardrobe();
+            testWardrobe();
+
         }
 
 
@@ -127,55 +128,50 @@ public class MainActivity extends AppCompatActivity {
         wardrobe.addItem(3,"Grey jeans", "");//3
 
          */
+        ///*
         //Julia
+
         wardrobe.addItem(1,"suit jacket", ""); //1
         wardrobe.addItem(1,"hooide", "");//3
         wardrobe.addItem(1,"coat", ""); //1
         wardrobe.addItem(1,"jumper", "");//3
+
         wardrobe.addItem(2,"t-shirt", "");//1
         wardrobe.addItem(2,"smart shirt", "");//2
         wardrobe.addItem(2,"long sleeve", "");//3
         wardrobe.addItem(2,"vest", "");//3
-        wardrobe.addItem(3,"jeans", "");//2
+        wardrobe.addItem(2,"polo", "");//9
+        wardrobe.addItem(2,"grey band shirt", "");//7
+
         wardrobe.addItem(3,"smart trousers", "");//3
         wardrobe.addItem(3,"trousers", "");//2
         wardrobe.addItem(3,"shorts", "");//3
-
-     /*   wardrobe.addItem(2,"White band Shirt", "");//4
-        wardrobe.addItem(2,"Blue Shirt", "");//5
-        wardrobe.addItem(2,"Orange long sleve Shirt", "");//6
-        wardrobe.addItem(2,"grey band shirt", "");//7
-        wardrobe.addItem(2,"brown shirt", "");//8
-        wardrobe.addItem(2,"polo", "");//9
-
-      */
-      //  wardrobe.addItem(3,"Blue jeans", "");//1
-     //   wardrobe.addItem(3,"Black jeans", "");//2
-       // wardrobe.addItem(3,"Grey jeans", "");//3
     }
     public void randomOutfit(View view)
     {
-        //used to for testing
-          /*  for (int i = 0; i < 5; i++)
+       /* //used to for testing
+           for (int i = 0; i < 5; i++)
             {
                 wardrobe = new NeuralNet();
                 testWardrobe();
                 wardrobe.running();
             }
 
-           */
-        try {
+        */
+
+
+       // try {
             wardrobe.running();
             ((TextView) findViewById(R.id.topResultText)).setText(wardrobe.currentBestOutfits[0].getName());
             ((TextView) findViewById(R.id.underResultText)).setText(wardrobe.currentBestOutfits[1].getName());
             ((TextView) findViewById(R.id.bottomResultText)).setText(wardrobe.currentBestOutfits[2].getName());
-            try {
+         //   try {
 
                 ((ImageView) findViewById(R.id.topImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[0]), ((ImageView) findViewById(R.id.topImage))));
                 ((ImageView) findViewById(R.id.underTopImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[1]), ((ImageView) findViewById(R.id.underTopImage))));
                 ((ImageView) findViewById(R.id.bottomImage)).setImageBitmap(setPic(wardrobe.getPath(wardrobe.currentBestOutfits[2]), ((ImageView) findViewById(R.id.bottomImage))));
                 ((TextView) findViewById(R.id.mainTitle)).setText(R.string.Title);
-            } catch (Exception e) {
+           /* } catch (Exception e) {
 
             }
         }
@@ -184,6 +180,9 @@ public class MainActivity extends AppCompatActivity {
         {
             ((TextView) findViewById(R.id.mainTitle)).setText("Please add clothes: ");
         }
+
+            */
+
     }
     public void accept(View view)
     {
